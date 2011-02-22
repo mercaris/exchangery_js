@@ -1,0 +1,30 @@
+a img {
+    text-decoration: none;
+    border: 0;
+}
+.hidden {
+    visibility: hidden;
+    display: none;
+}
+.navOn {
+    color: blue;
+    font-weight: bold;
+}
+.instructions {
+    width: 80%;
+    border: 1px solid brown;
+    background-color: beige;
+    padding: 10px;
+    margin: 0 auto 20px auto;
+}
+.detail_table {
+    width: 80%;
+    margin: 20px auto 20px auto;
+}
+.detail_table td {
+    vertical-align: top;
+}
+.section_title {
+    width: 80%;
+    margin: 20px auto;
+}
