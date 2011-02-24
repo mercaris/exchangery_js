@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <title>Trading Screen</title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript">
+       $(document).ready(function(){
+         $('form').submit(function() {
+           requestData = {
+             order: {
+               market: "123",
+               symbol: $("#symbol").val(),
+               side: $("#side").val(),
+               quantity: $("#quantity").val(),
+               price: $("#price").val(),
+             }
+           }
+           $.ajax({
+             type: 'POST',
+             url: 'ts/orders', 
+             contentType: "application/json; charset=utf-8", 
+             dataType: "json",
+             processData : false,
+             data: JSON.stringify(requestData),
+             success: function(data) {
+               console.log(data);
+             }
+           });
+
+           return false;
+         });
+       });
+
+    </script>
+  </head>
+<body>
+  <form id="order_ticket">
+    symbol: <input type="text" id="symbol" name="symbol"/>
+    side: <select id="side" name="side">
+      <option value="buy">buy</option>
+      <option value="sell">sell</option>
+    </select>
+    quantity: <input type="text" id="quantity" name="quantity"/>
+    price: <input type="text" id="price" name="price"/>
+    <input type="submit" value="Place Order"/>
+  </form>
+</body>
+</html>
