@@ -322,7 +322,7 @@ img {
 div.inner:after, .clearfix:after {clear: both;content: ' ';display: block;font-size: 0;line-height: 0;visibility: hidden;width: 0;height:0;}div.inner, .clearfix {display: inline-block;}* html div.inner, * html .clearfix {height: 1%;}div.inner, .clearfix {display: block; }
 .right{float:right !important;}
 .left{float:left !important;}
-.block { display:block; width:100%; height:100%; }
+.block { display:inline-block; width:100%; height:100%; }
 
 /*
     09 - Mobile

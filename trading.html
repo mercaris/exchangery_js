@@ -1,47 +1,135 @@
-<html>
-  <head>
-    <title>Trading Screen</title>
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript">
-       $(document).ready(function(){
-         $('form').submit(function() {
-           requestData = {
-             order: {
-               market: "123",
-               symbol: $("#symbol").val(),
-               side: $("#side").val(),
-               quantity: $("#quantity").val(),
-               price: $("#price").val(),
-             }
-           }
-           $.ajax({
-             type: 'POST',
-             url: 'ts/orders', 
-             contentType: "application/json; charset=utf-8", 
-             dataType: "json",
-             processData : false,
-             data: JSON.stringify(requestData),
-             success: function(data) {
-               console.log(data);
-             }
-           });
+<!DOCTYPE html>
+<html lang="en">
 
-           return false;
-         });
-       });
+<head>
 
-    </script>
-  </head>
-<body>
-  <form id="order_ticket">
-    symbol: <input type="text" id="symbol" name="symbol"/>
-    side: <select id="side" name="side">
-      <option value="buy">buy</option>
-      <option value="sell">sell</option>
-    </select>
-    quantity: <input type="text" id="quantity" name="quantity"/>
-    price: <input type="text" id="price" name="price"/>
-    <input type="submit" value="Place Order"/>
-  </form>
+    <meta charset="utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Exchangery</title>
+
+    <meta name="description" content="Boilerplate for creating HTML Prototypes and websites.">
+    <meta name="author" content="Adrian Unger">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+<body class="index">
+
+    <header>
+        <div class="inner">
+
+            <h1>The Exchangery</h1>
+
+            <nav>
+                <ul>
+                    <li><a href="/index.html" title="Home">Home</a></li>
+                    <li><a href="/faq.html" title="Frequently Asked Questions">FAQ</a></li>
+                    <li><a class="active" href="/trading.html" title="Trading">Trading</a></li>
+                    <li><a href="/demo.html" title="Demo" class="button darker">Try The Demo!</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </header>
+
+    <div id="intro" class="intro">
+        <div class="inner">
+
+            <h2>Trading</h2>
+
+        </div>
+    </div>
+
+    <div id="body">
+        <div class="inner">
+
+            <form id="order_ticket">
+                <label>Symbol:</label>
+                <input type="text" id="symbol" name="symbol">
+
+                <label>Side:</label>
+                <select id="side" name="side">
+                    <option value="buy">buy</option>
+                    <option value="sell">sell</option>
+                </select>
+
+                <label>Quantity:</label>
+                <input type="text" id="quantity" name="quantity">
+
+                <label>Price:</label>
+                <input type="text" id="price" name="price">
+
+                <input type="submit" value="Place Order" class="button">
+            </form>
+
+        </div>
+    </div>
+
+    <div id="signup" class="focus">
+        <div class="inset">
+            <div class="inner">
+
+                <p class="big column five">Sign up for our newsletter and get updates and early access.</p>
+
+                <div class="column seven last">
+                    <form id="newsletter">
+                        <input type="text" name="email" placeholder="you@example.com">
+                        <input type="submit" name="submit" value="Get Notified" class="button">
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="inner">
+
+            <p>&copy; 2011 The Exchangery.</p>
+
+        </div>
+    </footer>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script>!window.jQuery && document.write('<script src="js/jquery.js"><\/script>')</script>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+
+    $('#order_ticket').submit(function() {
+        requestData = {
+            order: {
+                market: "123",
+                symbol: $("#symbol").val(),
+                side: $("#side").val(),
+                quantity: $("#quantity").val(),
+                price: $("#price").val(),
+            }
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'ts/orders', 
+            contentType: "application/json; charset=utf-8", 
+            dataType: "json",
+            processData : false,
+            data: JSON.stringify(requestData),
+            success: function(data) {
+                console.log(data);
+            }
+        });
+
+        return false;
+    });
+
+});
+</script>
+
 </body>
 </html>
