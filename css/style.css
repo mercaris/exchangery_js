@@ -287,6 +287,76 @@ label, input[type=button], input[type=submit], button {
     font-weight:800;
     margin-left:2%;
 }
+table label {
+    clear:left;
+    min-width:200px;
+    border-bottom:1px solid #eee;
+    display:block;
+    float:left;
+}
+table input, table select {
+    display:inline-block;
+    float:left;
+    margin-bottom:20px;
+}
+/* Boop, Tables! */
+table {
+    margin:0;
+    padding:0;
+    border:0;
+    font-size:100%;
+    font:inherit;
+    vertical-align:baseline;
+    border-collapse:collapse;
+    border-spacing:0;
+    border:0;
+}
+fieldset {
+    clear:both;
+    border:0;
+    margin-bottom:20px;
+}
+legend {
+    font-weight:800;
+    margin:0;
+    padding:10px 0 20px;
+}
+.detail_table {
+    width:80%;
+    margin:20px auto 20px auto;
+}
+.detail_table td {
+    vertical-align:top;
+    padding-top:20px;
+}
+.section_title {
+    width:80%;
+    margin:20px auto;
+}
+th {
+    border:0;
+    background:#F6F6F6;
+}
+td {
+    border:0;
+    border-top:1px solid #CBD5D9;
+}
+.hidden {
+    visibility:hidden;
+    display:none;
+}
+.navOn {
+    background:#eaeaea;
+}
+.instructions {
+    -moz-border-radius:8px;-webkit-border-radius:8px;
+    -moz-box-shadow:0 1px 2px #e3e3e3;-webkit-box-shadow:0 1px 2px #e3e3e3;
+    background-color:#f6f6f6;
+    border:1px solid #cbd5d9;
+    padding:1%;
+    width:80%;
+    margin:0 auto;
+}
 
 /* 
     07 - Embeds
@@ -319,7 +389,7 @@ img {
 .column.ten { width:82.7%; }
 .column.eleven { width:91.35%; }
 .column.twelve,.full { width:100%; }
-div.inner:after, .clearfix:after {clear: both;content: ' ';display: block;font-size: 0;line-height: 0;visibility: hidden;width: 0;height:0;}div.inner, .clearfix {display: inline-block;}* html div.inner, * html .clearfix {height: 1%;}div.inner, .clearfix {display: block; }
+div.inner:after, .clearfix:after {clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0;}div.inner, .clearfix {display:inline-block;}* html div.inner, * html .clearfix {height:1%;}div.inner, .clearfix {display:block; }
 .right{float:right !important;}
 .left{float:left !important;}
 .block { display:inline-block; width:100%; height:100%; }
@@ -327,7 +397,7 @@ div.inner:after, .clearfix:after {clear: both;content: ' ';display: block;font-s
 /*
     09 - Mobile
 */
-@media screen and (max-width: 767px) {
+@media screen and (max-width:767px) {
 /* Mobile adjustments based on The 1140px Grid by Andy Taylor - http://cssgrid.net */
     .inner {
         width:100%;
@@ -348,40 +418,9 @@ div.inner:after, .clearfix:after {clear: both;content: ' ';display: block;font-s
 @media print {
     * { background:transparent !important; color:#1a1a1a !important; text-shadow:none; }
     a, a:visited { color:#1a1a1a !important; text-decoration:underline; }
-    a:after { content: " (" attr(href) ")"; }
-    abbr:after { content: " (" attr(title) ")"; }&nbsp;&nbsp;&nbsp;&nbsp;.ir a:after { content: ""; } &nbsp;/* Don't show links for images */&nbsp;&nbsp;&nbsp;&nbsp;pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }&nbsp;&nbsp;&nbsp;&nbsp;img { page-break-inside: avoid; }
-    @page { margin: 0.5cm; }
-    p, h2, h3 { orphans: 3; widows: 3; }
-    h2, h3{ page-break-after: avoid; }
-}
-
-a img {
-    text-decoration: none;
-    border: 0;
-}
-.hidden {
-    visibility: hidden;
-    display: none;
-}
-.navOn {
-    color: blue;
-    font-weight: bold;
-}
-.instructions {
-    width: 80%;
-    border: 1px solid brown;
-    background-color: beige;
-    padding: 10px;
-    margin: 0 auto 20px auto;
-}
-.detail_table {
-    width: 80%;
-    margin: 20px auto 20px auto;
-}
-.detail_table td {
-    vertical-align: top;
-}
-.section_title {
-    width: 80%;
-    margin: 20px auto;
+    a:after { content:" (" attr(href) ")"; }
+    abbr:after { content:" (" attr(title) ")"; }&nbsp;&nbsp;&nbsp;&nbsp;.ir a:after { content:""; } &nbsp;/* Don't show links for images */&nbsp;&nbsp;&nbsp;&nbsp;pre, blockquote { border:1px solid #999; page-break-inside:avoid; }&nbsp;&nbsp;&nbsp;&nbsp;img { page-break-inside:avoid; }
+    @page { margin:0.5cm; }
+    p, h2, h3 { orphans:3; widows:3; }
+    h2, h3{ page-break-after:avoid; }
 }
