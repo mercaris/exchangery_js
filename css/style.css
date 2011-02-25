@@ -72,6 +72,15 @@ body {
 .padding {
     padding:40px 0;
 }
+.inner_padding {
+    padding:20px 14px 10px 14px;
+}
+.box {
+    -moz-border-radius:8px;-webkit-border-radius:8px;
+    -moz-box-shadow:0 1px 2px #e3e3e3;-webkit-box-shadow:0 1px 2px #e3e3e3;
+    background-color:#f6f6f6;
+    border:1px solid #cbd5d9;
+}
 header {
     background:#032452;
     border-bottom:2px solid #1a3962;
@@ -104,6 +113,7 @@ h1 {
 h2 {
     font:200 2.4em 'Helvetica Neue Light Condensed', 'Arial Narrow', sans-serif;
     color:#053251;
+    padding-top:10px;
     padding-bottom:20px;
 }
 h3 {
@@ -132,6 +142,9 @@ a, a:active, a:visited {
 }
 a:hover { 
     color:#036;
+}
+a.active {
+    border-bottom:1px solid #607890;
 }
 nav > ul > li > a {
     color:#fff;
@@ -164,7 +177,6 @@ p.big {
     display:inline-block;
     padding:10px 14px 9px;
     -moz-border-radius:8px;-webkit-border-radius:8px;
-    -moz-box-shadow:0 1px 2px #111;-webkit-box-shadow:0 1px 2px #111;
     -moz-box-shadow:0 1px 2px #c1ccd3;-webkit-box-shadow:0 1px 2px #c1ccd3;
     background-color:#00b9f1;
     background-image:url(../images/button-overlay.png);
@@ -223,9 +235,18 @@ ol,ul {
 }
 ol > li { 
     list-style:decimal outside none; 
+    margin-left:20px;
 }
 ul > li { 
     list-style:disc outside none; 
+}
+dt {
+    font:800 1.2em Helvetica, Arial, sans-serif;
+    padding-bottom:10px;
+    color:#032452;
+}
+dd {
+    margin-bottom:40px;
 }
 .index ul > li {
     list-style:none outside none;
@@ -288,6 +309,7 @@ img {
 .column.one { width:4.85%; }
 .column.two { width:13.5%; }
 .column.three { width:22.15%; }
+.column.three_and_a_half { width:28%; }
 .column.four { width:30.8%; }
 .column.five { width:39.45%; }
 .column.six { width:48.1%; }
