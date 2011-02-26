@@ -1,0 +1,91 @@
+{
+	"snapshot": {
+		"market": "123",
+		"products": [
+			{
+				"id": 1,
+				"symbol": "AAPL"
+			},
+			{
+				"id": 2,
+				"symbol": "MSFT"
+			},
+			{
+				"id": 3,
+				"symbol": "GOOG"
+			}
+		],
+		"orders": [
+			{
+				"id": 123,
+				"product_id": 1,
+				"side": "bid",
+				"price": 354.0,
+				"qty": 5
+			},
+			{
+				"id": 124,
+				"product_id": 1,
+				"side": "bid",
+				"price": 353.5,
+				"qty": 30
+			},
+			{
+				"id": 125,
+				"product_id": 1,
+				"side": "offer",
+				"price": 354.2,
+				"qty": 9
+			},
+			{
+				"id": 126,
+				"product_id": 2,
+				"side": "bid",
+				"price": 27.5,
+				"qty": 700
+			},
+			{
+				"id": 127,
+				"product_id": 3,
+				"side": "offer",
+				"price": 616.0,
+				"qty": 20
+			},
+			{
+				"id": 163,
+				"product_id": 3,
+				"side": "offer",
+				"price": 616.3,
+				"qty": 1
+			},
+			{
+				"id": 143,
+				"product_id": 3,
+				"side": "bid",
+				"price": 615.8,
+				"qty": 325
+			},
+			{
+				"id": 113,
+				"product_id": 3,
+				"side": "offer",
+				"price": 616.1,
+				"qty": 15
+			},
+			{
+				"id": 114,
+				"product_id": 3,
+				"side": "bid",
+				"price": 615.9,
+				"qty": 47
+			},
+			{
+				"id": 115,
+				"product_id": 3,
+				"side": "bid",
+				"price": 615.9,
+				"qty": 53
+			}
+		]
+	}
+}
