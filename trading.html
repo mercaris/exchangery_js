@@ -166,7 +166,7 @@
 					break;
 			}
 		});
-		$('form').submit(function() {
+		$('#order').submit(function() {
 			requestData = {
 				order: {
 					market: exchng.marketId,
@@ -175,7 +175,7 @@
 					quantity: $('[name=quantity]').val(),
 					price: $('[name=price]').val(),
 				}
-			}
+			};
 			$.ajax({
 				type: 'POST',
 				url: 'ts/orders', 
@@ -193,6 +193,24 @@
 		//exchng.beginPoll();
 	})();
     </script> 
+
+    <script type="text/javascript">
+      $('#newsletter').submit(function() {
+			requestData = { email: $('[name=email]').val() };			
+			$.ajax({
+				type: 'POST',
+				url: 'list/subscribe', 
+				contentType: 'application/json; charset=utf-8', 
+				dataType: 'json',
+				processData : false,
+				data: JSON.stringify(requestData),
+				success: function(data) {
+					console.log(data);
+				}
+			});
+			return false;
+		});
+    </script>
 
 </body>
 </html>
