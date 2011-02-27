@@ -279,7 +279,7 @@ label, input[type=button], input[type=submit], button {
     cursor:pointer;
 }
 #newsletter input[type=text] {
-    width:70%;
+    width:65%;
     font-size:1.2em;
 }
 #newsletter input[type=submit] {
