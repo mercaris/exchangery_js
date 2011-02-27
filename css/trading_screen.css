@@ -1,0 +1,23 @@
+table #products {
+    border-collapse: collapse;
+}
+#products td {
+    padding: 5px 10px;
+    border: 1px solid black;
+}
+#orders-grid {
+    width: 800px;
+}
+#orders-grid td {
+    width: 20%;
+}
+#orders-grid td:first-child {
+    cursor: pointer;
+}
+.orders-grid-detail {
+    width: 800px;
+    background: white;
+}
+.orders-grid-detail td {
+    width: 20%;
+}
