@@ -126,20 +126,21 @@
 			data: JSON.stringify({username : "demo", password : "demo"}),
 			success: function(data) {
 				console.log(data);
+                                load_market();
 			}
 		});	
    	});
     </script>
 
     <script type="text/javascript">
-      (function() {
+      function load_market() {
   	var exchng = new Exchng("123", function(event) {
 			switch(event['name']) {
 				case 'fetch-complete':
 					$('#order [name=symbol] option').addClass('marked');
 					$.each(exchng.products, function() {
 						if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
-							$('#order [name=symbol]').append($('<option></option>').text(this['symbol']));
+							$('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
 						}
 					});
 					$('#order [name=symbol] option.marked').detach();
@@ -169,8 +170,8 @@
 		$('#order').submit(function() {
 			requestData = {
 				order: {
-					market: exchng.marketId,
-					symbol: $('[name=symbol]').val(),
+					market_id: exchng.marketId,
+					product_id: $('[name=symbol]').val(),
 					side: $('[name=side]').val(),
 					quantity: $('[name=quantity]').val(),
 					price: $('[name=price]').val(),
@@ -190,8 +191,8 @@
 			return false;
 		});
 		exchng.fetchData();
-		//exchng.beginPoll();
-	})();
+		exchng.beginPoll();
+	};
     </script> 
 
     <script type="text/javascript">

@@ -31,7 +31,7 @@
 					products[this['product_id']]['orders'][this['side'] + 's'].push({
 						'id': this['id'],
 						'price': this['price'],
-						'quantity': this['qty']
+						'quantity': this['quantity']
 					});
 				});
 				exchng.products = {};
@@ -49,9 +49,11 @@
 		var exchng = this;
 		setInterval(function() {
 			if(!exchng._fetching) {
-				exchng.fetchData();
+			    $.get('ts/orders', function(data, textStatus) {
+				console.log(data);
+			    });
 			}
-		}, 500);
+		}, 5000);
 	};
 	Exchng.Product = function(id, symbol, orders) {
 		var product = this;
