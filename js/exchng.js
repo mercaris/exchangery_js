@@ -45,12 +45,13 @@
 			exchng._fetching = false;
 		}, 'json');
 	};
-	Exchng.prototype.beginPoll = function() {
+	Exchng.prototype.beginPoll = function(callback) {
 		var exchng = this;
 		setInterval(function() {
 			if(!exchng._fetching) {
-			    $.get('ts/orders', function(data, textStatus) {
-				console.log(data);
+			    $.get('ts/orders', function(data) {
+					console.log(callback);
+					callback.apply(data);
 			    });
 			}
 		}, 5000);
@@ -63,7 +64,19 @@
 			'offers': orders['offers'].slice(0),
 			'bids': orders['bids'].slice(0)
 		};
+		this.sortOrders();
+	};
+	Exchng.Product.prototype.addOrder = function(order) {
 		var orders = this['orders'];
+		orders[order['side'] + 's'].push({
+						'id': order['id'],
+						'price': order['price'],
+						'quantity': order['quantity']
+					});
+	};
+	Exchng.Product.prototype.sortOrders = function() {
+		var orders = this['orders'];
+		var product = this;
 		orders['offers'].sort(function(a, b) {
 			return a['price'] < b['price'];
 		});
