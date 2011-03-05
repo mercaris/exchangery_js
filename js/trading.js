@@ -52,20 +52,8 @@ function load_market() {
 	    log(order);
 	});
     });
-    /*												
-throwing exception on $.each
-exchng.beginPoll(function(orders) {
-	console.log(orders);
-												
-	$.each(orders, function(index, order) {
-	console.log("received order: " + order);
-	var product = exchng.products[order.product_id];
-	product.addOrder(order);
-	});
-												
-	});
-    */
 };
+
 function draw_market() {
     $('#order [name=symbol] option').addClass('marked');
     $.each(exchng.products, function() {
