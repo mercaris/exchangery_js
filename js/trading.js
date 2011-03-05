@@ -46,17 +46,24 @@ function load_market() {
 	return false;
     });
     exchng.fetchData();
-    /*												throwing exception on $.each
-												exchng.beginPoll(function(orders) {
-												console.log(orders);
+    exchng.beginPoll(function (orders) {
+	log(orders);
+	$.each(orders, function (index, order) {
+	    log(order);
+	});
+    });
+    /*												
+throwing exception on $.each
+exchng.beginPoll(function(orders) {
+	console.log(orders);
 												
-												$.each(orders, function(index, order) {
-												console.log("received order: " + order);
-												var product = exchng.products[order.product_id];
-												product.addOrder(order);
-												});
+	$.each(orders, function(index, order) {
+	console.log("received order: " + order);
+	var product = exchng.products[order.product_id];
+	product.addOrder(order);
+	});
 												
-												});
+	});
     */
 };
 function draw_market() {
