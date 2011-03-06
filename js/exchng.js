@@ -48,20 +48,16 @@
 	Exchng.prototype.beginPoll = function(callback) {
 	    var exchgn = this;
 	    var poll = function () {
-		log("polling");
 		if (!exchng._fetching) {
 		    exchng._fetching = true;
-		    log("actually doing it");
 		    $.ajax({
 			url: 'ts/orders', 
 			dataType: 'json',
 			success: function(data) {
-			    log("came back from call");
-			    callback.apply(data);
+			    callback(data);
 			},
 			error: function (data) {
 			    log("error polling");
-			    log(data);
 			}
 		    });
 		}

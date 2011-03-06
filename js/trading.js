@@ -46,10 +46,8 @@ function load_market() {
 	return false;
     });
     exchng.fetchData();
-    console.log("about to begin poll");
     exchng.beginPoll(function (orders) {
-	log(orders);
-	$.each(orders, function (index, order) {
+	$.each(orders.orders, function (index, order) {
 	    log(order);
 	});
     });
