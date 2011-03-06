@@ -46,15 +46,29 @@
 		}, 'json');
 	};
 	Exchng.prototype.beginPoll = function(callback) {
-		var exchng = this;
-		setInterval(function() {
-			if(!exchng._fetching) {
-			    $.get('ts/orders', function(data) {
-					console.log(callback);
-					callback.apply(data);
-			    });
+	    var exchgn = this;
+	    var poll = function () {
+		log("polling");
+		if (!exchng._fetching) {
+		    exchng._fetching = true;
+		    log("actually doing it");
+		    $.ajax({
+			url: 'ts/orders', 
+			dataType: 'json',
+			success: function(data) {
+			    log("came back from call");
+			    callback.apply(data);
+			},
+			error: function (data) {
+			    log("error polling");
+			    log(data);
 			}
-		}, 5000);
+		    });
+		}
+	    }
+	    
+	    poll();
+	    setInterval(poll, 5000);
 	};
 	Exchng.Product = function(id, symbol, orders) {
 		var product = this;
