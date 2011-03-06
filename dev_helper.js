@@ -8,12 +8,13 @@ Just set up something to use it as a reverse proxy on <path>/ts/
 */
 
 var http = require('http'),
+    fs = require('fs'),
     urllib = require('url');
 
 http.createServer(function (req, res) {
     
     var respond = function (s) {
-	res.writeHead(200);
+	res.writeHead(200, {'Content-Type': 'application/json'});
 	res.write(s);
 	res.end();
     }
@@ -34,6 +35,10 @@ http.createServer(function (req, res) {
 			 respond(raw);
 		     });
 		 });
+    }else if (query.pathname == '/ts/orders') {
+	fs.readFile('./orders.json', function (err, data) {
+	    respond(data);
+	});
     }
 
 }).listen(8124, '127.0.0.1');
