@@ -48,8 +48,10 @@ function load_market() {
     exchng.fetchData();
     exchng.beginPoll(function (orders) {
 	$.each(orders.orders, function (index, order) {
-	    log(order);
+	    exchng.products[order.product_id].addOrder(order);
 	});
+	log("new orders!");
+	draw_market();
     });
 };
 
@@ -67,9 +69,10 @@ function draw_market() {
 	$.each(this['details'], function() {
 	    var detail = this;
 	    var tr = $('<tr></tr>');
-	    if(!detail['best']) {
-		tr.css('display', 'none');
-	    }
+	    log(detail);
+//	    if(!detail['best']) {
+//		tr.css('display', 'none');
+//	    }
 	    tr.append($('<td></td>').text(product['symbol']));
 	    $.each(['bid_quantity', 'bid', 'offer', 'offer_quantity'], function() {
 		if(detail[this]) {

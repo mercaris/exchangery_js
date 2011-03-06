@@ -63,7 +63,6 @@
 		}
 	    }
 	    
-	    poll();
 	    setInterval(poll, 5000);
 	};
 	Exchng.Product = function(id, symbol, orders) {

@@ -37,7 +37,11 @@ http.createServer(function (req, res) {
 		 });
     }else if (query.pathname == '/ts/orders') {
 	fs.readFile('./orders.json', function (err, data) {
-	    respond(data);
+	    var data = JSON.parse(data);
+	    for (var i=0; i<data.orders.length; i++) {
+		data.orders[i].price = Math.round(Math.random()*100, 2);
+	    }
+	    respond(JSON.stringify(data));
 	});
     }
 
