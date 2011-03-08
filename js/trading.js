@@ -50,38 +50,57 @@ function load_market() {
 	$.each(orders.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
-	log("new orders!");
 	draw_market();
     });
 };
 
 function draw_market() {
-    $('#order [name=symbol] option').addClass('marked');
-    $.each(exchng.products, function() {
+    detach_marked();
+
+    var $products = $('#products tbody');
+    $products.empty();
+
+    $.each(exchng.products, function (index, product) {
 	if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
 	    $('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
 	}
-    });
-    $('#order [name=symbol] option.marked').detach();
-    $('#products tbody').empty();
-    $.each(exchng.products, function() {
-	var product = this;
-	$.each(this['details'], function() {
-	    var detail = this;
-	    var tr = $('<tr></tr>');
-	    log(detail);
-//	    if(!detail['best']) {
-//		tr.css('display', 'none');
-//	    }
-	    tr.append($('<td></td>').text(product['symbol']));
-	    $.each(['bid_quantity', 'bid', 'offer', 'offer_quantity'], function() {
-		if(detail[this]) {
-		    tr.append($('<td></td>').text(detail[this]));
-		} else {
-		    tr.append($('<td></td>'));
+
+	
+	product.sortOrders();
+
+	var add_order = function (detail) {
+	    if (!detail['best']) return;
+
+	    var $tr = $('<tr></tr>');
+	    $tr.append($('<td></td>').text(product['symbol']));
+
+	    var add_cell = function (i, k) {
+		var $td = $('<td></td>')
+		if (detail[k]) {
+		    $td.text(detail[k]);
 		}
-	    });
-	    $('#products tbody').append(tr);
+		$tr.append($td);
+	    }
+
+	    $.each(['bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
+
+	    $products.append($tr);
+	}
+	
+	$.each(product.details, function (index, detail) {
+	    add_order(detail);
 	});
     });
-};
+}
+
+function detach_marked() {
+    $('#order [name=symbol] option').addClass('marked');
+    $.each(exchng.products, function(index product) {
+	if($('#order [name=symbol] option:contains(' + product['symbol'] + ')')
+	   .removeClass('marked').length == 0) {
+	    $('#order [name=symbol]').append(
+		$('<option value=' + this['id'] + '></option>').text(this['symbol']));
+	}
+    });
+    $('#order [name=symbol] option.marked').detach();
+}

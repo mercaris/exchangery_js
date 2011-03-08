@@ -1,74 +1,9 @@
 {
-		"orders": [
-			{
-				"id": 223,
-				"product_id": 1,
-				"side": "bid",
-				"price": 354.0,
-				"qty": 5
-			},
-			{
-				"id": 224,
-				"product_id": 1,
-				"side": "bid",
-				"price": 353.5,
-				"qty": 30
-			},
-			{
-				"id": 225,
-				"product_id": 1,
-				"side": "offer",
-				"price": 354.2,
-				"qty": 9
-			},
-			{
-				"id": 226,
-				"product_id": 2,
-				"side": "bid",
-				"price": 27.5,
-				"qty": 700
-			},
-			{
-				"id": 227,
-				"product_id": 3,
-				"side": "offer",
-				"price": 616.0,
-				"qty": 20
-			},
-			{
-				"id": 263,
-				"product_id": 3,
-				"side": "offer",
-				"price": 616.3,
-				"qty": 1
-			},
-			{
-				"id": 243,
-				"product_id": 3,
-				"side": "bid",
-				"price": 615.8,
-				"qty": 325
-			},
-			{
-				"id": 213,
-				"product_id": 3,
-				"side": "offer",
-				"price": 616.1,
-				"qty": 15
-			},
-			{
-				"id": 214,
-				"product_id": 3,
-				"side": "bid",
-				"price": 615.9,
-				"qty": 47
-			},
-			{
-				"id": 215,
-				"product_id": 3,
-				"side": "bid",
-				"price": 615.9,
-				"qty": 53
-			}
-		]
+	"orders": [
+		  {"product_id": 2,
+		   "id": 500,
+		   "side": "offer",
+		   "price": 100.0,
+		   "qty": 5}
+	]
 }
