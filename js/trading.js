@@ -8,30 +8,36 @@ $(document).ready(function(){
 	data: JSON.stringify({username : "demo", password : "demo"}),
 	success: function(data) {
 	    console.log(data);
-            load_market();
+            init_market();
 	}
     });	
 });
 
 var exchng;
-function load_market() {
-    exchng= new Exchng("123", function(event) {
+function init_market() {
+    exchng = new Exchng("123", function(event) {
 	switch(event['name']) {
 	case 'fetch-complete':
 	    draw_market();
 	    break;
 	}
     });
-    $('#order').submit(function() {
-	requestData = {
+    $('#order').submit(function(event) {
+	event.preventDefault();
+
+	var $this = $(this);
+	var requestData = {
 	    order: {
 		market_id: exchng.marketId,
-		product_id: $('[name=symbol]').val(),
-		side: $('[name=side]').val(),
-		quantity: $('[name=quantity]').val(),
-		price: $('[name=price]').val(),
+		product_id: $this.find('input[name=symbol]').val(),
+		side: $this.find('input[name=side]').val(),
+		quantity: $this.find('input[name=quantity]').val(),
+		price: $this.find('input[name=price]').val(),
 	    }
 	};
+
+	log(requestData);
+
 	$.ajax({
 	    type: 'POST',
 	    url: 'ts/orders', 
@@ -43,12 +49,11 @@ function load_market() {
 		console.log(data);
 	    }
 	});
-	return false;
     });
     exchng.fetchData();
 
     exchng.beginPoll(function (orders) {
-	$.each(orders.market_update[0].orders, function (index, order) {
+	$.each(orders.market_update.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
 	draw_market();
@@ -65,12 +70,11 @@ function draw_market() {
 	if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
 	    $('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
 	}
-
 	
 	product.sortOrders();
 
 	var add_order = function (detail) {
-	    if (!detail['best']) return;
+	    //if (!detail['best']) return;
 
 	    var $tr = $('<tr></tr>');
 	    $tr.append($('<td></td>').text(product['symbol']));
