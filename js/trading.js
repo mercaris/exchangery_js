@@ -46,12 +46,14 @@ function load_market() {
 	return false;
     });
     exchng.fetchData();
+/*
     exchng.beginPoll(function (orders) {
 	$.each(orders.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
 	draw_market();
     });
+*/
 };
 
 function draw_market() {
@@ -95,7 +97,7 @@ function draw_market() {
 
 function detach_marked() {
     $('#order [name=symbol] option').addClass('marked');
-    $.each(exchng.products, function(index product) {
+    $.each(exchng.products, function(index, product) {
 	if($('#order [name=symbol] option:contains(' + product['symbol'] + ')')
 	   .removeClass('marked').length == 0) {
 	    $('#order [name=symbol]').append(

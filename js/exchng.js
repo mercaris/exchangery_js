@@ -51,7 +51,7 @@
 		if (!exchng._fetching) {
 		    exchng._fetching = true;
 		    $.ajax({
-			url: 'ts/orders', 
+			url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
 			    callback(data);

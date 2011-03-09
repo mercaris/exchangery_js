@@ -12,37 +12,65 @@ var http = require('http'),
     urllib = require('url');
 
 http.createServer(function (req, res) {
-    
-    var respond = function (s) {
-	res.writeHead(200, {'Content-Type': 'application/json'});
-	res.write(s);
+
+    var respond = function (data, header) {
+	res.writeHead(200, header);
+	res.write(data);
 	res.end();
     }
 
     var query = urllib.parse(req.url);
+    var remote_path = '/ts/';
+    var remote = query.pathname.substr(0, remote_path.length) === remote_path
 
-    if (query.pathname == '/ts/login') {
-	respond(JSON.stringify({success: 'yes'}));
-    }else if (query.pathname == '/ts/market_snapshot') {
-	http.get({host: 'theexchangery.com',
-		  path: '/ts/market_snapshot?key=A8b04F3&market_id=123'},
-		 function (res) {
-		     var raw = '';
-		     res.on('data', function (chunk) {
-			 raw += chunk;
-		     });
-		     res.on('end', function () {
-			 respond(raw);
-		     });
-		 });
-    }else if (query.pathname == '/ts/orders') {
-	fs.readFile('./orders.json', function (err, data) {
-	    var data = JSON.parse(data);
-	    for (var i=0; i<data.orders.length; i++) {
-		data.orders[i].price = Math.round(Math.random()*100, 2);
+    if (remote) {
+	var body = '';
+	req.addListener('data', function (chunk) {
+            body += chunk;
+	});
+	req.addListener('end', function () {
+	    var pathquery = query.pathname;
+	    if (query.search){
+		pathquery += query.search;
 	    }
-	    respond(JSON.stringify(data));
+	    //'theexchangery.com'
+	    var cookie = { cookie : req.headers.cookie };
+	    //var options = {host: '127.0.0.1', port: 8000, method: req.method, path: pathquery, headers: cookie};
+	    var options = {host: 'theexchangery.com', port: 80, method: req.method, path: pathquery, headers: cookie};
+	    console.log('making request: ' + JSON.stringify(options));
+	    var request = http.request(options, 
+				       function (res) {
+					   var raw = '';
+					   res.on('data', function (chunk) {
+					       raw += chunk;					      
+					   });
+					   res.on('end', function () {	
+					       var response_header = res.headers;
+					       console.log('remote response: ' + raw);
+					       respond(raw, response_header);
+					   });
+				       });
+	    var request_body = JSON.stringify(body);
+	    console.log('request body: ' + body);
+	    request.write(body);
+	    request.end();
+	});
+    }
+    else {
+	var filename = query.pathname.substr(1);
+	if (filename == ''){
+	    filename = 'index.html';
+	}
+	console.log('reading file: ' + filename);
+	fs.readFile(filename, function (err, data) {
+	    if (!err){
+		res.writeHead(200);
+		res.write(data);
+		res.end();
+	    }
 	});
     }
 
 }).listen(8124, '127.0.0.1');
+
+console.log('server started at http://localhost:8124/');

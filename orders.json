@@ -1,9 +1,0 @@
-{
-	"orders": [
-		  {"product_id": 2,
-		   "id": 500,
-		   "side": "offer",
-		   "price": 100.0,
-		   "qty": 5}
-	]
-}
