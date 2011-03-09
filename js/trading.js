@@ -53,6 +53,7 @@ function init_market() {
     exchng.fetchData();
 
     exchng.beginPoll(function (orders) {
+	log(orders);
 	$.each(orders.market_update.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});

@@ -51,21 +51,23 @@
 		if (!exchng._fetching) {
 		    exchng._fetching = true;
 		    $.ajax({
-			url: 'ts/market_update', 
+			url: '/market_update.json?'+(new Date()).getTime(),
+			//url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
+			    log(data);
 			    exchng._fetching = false;
 			    callback(data);
 			},
-			error: function (data) {
+			error: function (error) {
 			    exchng._fetching = false;
-			    log("error polling");
+			    log("error polling", error.statusText);
 			}
 		    });
 		}
 	    }
 	    
-	    setInterval(poll, 5000);
+	    setInterval(poll, 10000);
 	};
 	Exchng.Product = function(id, symbol, orders) {
 		var product = this;
