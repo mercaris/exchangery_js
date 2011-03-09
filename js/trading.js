@@ -46,14 +46,13 @@ function load_market() {
 	return false;
     });
     exchng.fetchData();
-/*
+
     exchng.beginPoll(function (orders) {
-	$.each(orders.orders, function (index, order) {
+	$.each(orders.market_update[0].orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
 	draw_market();
     });
-*/
 };
 
 function draw_market() {
