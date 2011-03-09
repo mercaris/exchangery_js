@@ -54,9 +54,11 @@
 			url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
+			    exchng._fetching = false;
 			    callback(data);
 			},
 			error: function (data) {
+			    exchng._fetching = false;
 			    log("error polling");
 			}
 		    });

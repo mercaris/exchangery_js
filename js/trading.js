@@ -29,8 +29,8 @@ function init_market() {
 	var requestData = {
 	    order: {
 		market_id: exchng.marketId,
-		product_id: $this.find('input[name=symbol]').val(),
-		side: $this.find('input[name=side]').val(),
+		product_id: $this.find('select[name=symbol] option:selected').val(),
+		side: $this.find('select[name=side] option:selected').val(),
 		quantity: $this.find('input[name=quantity]').val(),
 		price: $this.find('input[name=price]').val(),
 	    }
