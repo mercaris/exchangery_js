@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <title>Exchangery API</title>
+  </head>
+  <body>
+    <h1>Trading API</h1>
+    This is the public interface of the trading platform, to be used to develop trading screens. <br />
+
+    <h2>Login</h2>
+    Before any data can be retrieved from the api, a login must be made. A login is per client, and subsequent calls to the api will only return information pertinent to that particular client. In order to achieve this, a session-id cookie is returned with the login response. It must be returned in the request header of all subsequent requests. In the future there may be an optional request parameter version of this for non browser clients. <br />
+    <h3>request</h3>
+    <div class="api-request">
+      <label for="method">method: </label>POST <br />
+      <label for="url">url: </label>/ts/login <br />
+      <label for="body">body: </label>{"username":"[username]", "password":"[p455w0rd]", "market_id":"[id]"} <br />
+    </div>
+    <h3>response</h3>
+    <div class="api-response">
+      {"result":"success"}
+    </div>
+
+    <h2>Market Snapshot</h2>
+    The market snapshot is the current state of the market at any given time. This lookup is expensive, and should only be performed once after login. This data can be used to construct an orders grid with full depth. <br />
+    <h3>request</h3>
+    <div class="api-request">
+      <label for="method">method: </label>GET<br />
+      <label for="url">url: </label>/ts/market_snapshot?market_id=[id]<br />
+    </div>
+    <h3>response</h3>
+    <div class="api-response">
+      The response to this request is a JSON data structure called the <strong>snapshot</strong>. A snapshot consists of a market, a list of products and a list of orders.
+      <h4>snapshot.products</h4>
+      A list of all the products that are available to trade in the market. A product consists of an id and a symbol.
+      <h4>snapshot.orders</h4>
+      A list of all of the orders currently in the live market. An order consists of a market_id, product_id, side (buy or sell), quantity and price.
+    </div>
+
+    <h2>Market Update</h2>
+    <h3>request</h3>
+    <div class="api-request">
+      <label for="method">method: </label>GET<br />
+      <label for="url">url: </label>/ts/market_update?market_id=[id]<br />
+    </div>
+    <h3>response</h3>
+    <div class="api-response">
+      The response to this request is a JSON data structure called the <strong>market_update</strong>. A market_update consists of a list of orders and a list of fills.
+      <h4>market_update.orders</h4>
+      A list of all of the orders that have been created since the last time this method was called (or since login if it has not previously been called). An order consists of a market_id, product_id, side (buy or sell), quantity and price.
+      <h4>market_update.fills</h4>
+      A list of all the fills that have been created since the last time this method was called. A fill consists of an order_id. The order corresponing to this fill should be removed from the market.
+    </div>
+
+    <h2>Order</h2>
+    <h3>request</h3>
+    <div class="api-request">
+      <label for="method">method: </label>POST<br />
+      <label for="url">url: </label>/ts/orders<br />
+      <label for="body">body: </label>{"order":{"market_id":"[id]","product_id":"[id]","side":"[buy/sell]","quantity":"[quantity]","price":"[price]"}}<br />
+    </div>
+    <h3>response</h3>
+    <div class="api-response">
+      {"result":"success"}
+    </div>
+
+    <h1>Product API</h1>
+    This is the public interface for creating and managing products. <br />
+
+    <h1>Account API</h1>
+    This is the public interface for creating and managing company and user accounts. <br />
+
+    <h1>Risk API</h1>
+    This is the public interface for setting up clearing, margins and limits. <br />
+
+    <h1>Screen API</h1>
+    For hosted accounts this is the public interface to modify your user's trading screen. <br />
+    <!-- template
+    <h2></h2>
+    <h3>request</h3>
+    <div class="api-request">
+      <label for="method">method: </label>POST <br />
+      <label for="url">url: </label>/ts/login <br />
+      <label for="body">body: </label>{"username":"demo","password":"demo"} <br />
+    </div>
+    <h3>response</h3>
+    <div class="api-response">
+      
+    </div>
+    -->
+  </body>
+</html>
