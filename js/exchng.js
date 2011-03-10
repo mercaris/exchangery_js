@@ -123,39 +123,41 @@
 		orders['bids'].sort(function(a, b) {
 			return a['price'] < b['price'];
 		});
-		this['details'] = [];
-		$.each(orders['offers'], function() {
-			if(product['details'].length == 0 || product['details'][product['details'].length - 1]['offer'] != this['price']) {
-				product['details'].push({
-					'offer': this['price'],
-					'offer_quantity': this['quantity']
-				});
-			} else {
-				product['details'][product['details'].length - 1]['offer_quantity'] += this['quantity'];
-			}
-		});
-		$.each(orders['bids'], function() {
-			if(product['details'].length == 0) {
-				product['details'].push({
-					'bid': this['price'],
-					'bid_quantity': this['quantity']
-				});
-				product['details'][product['details'].length - 1]['best'] = true;
-			} else if('bid' in product['details'][product['details'].length - 1]) {
-				if(product['details'][product['details'].length - 1]['bid'] != this['price']) {
-					product['details'].push({
-						'bid': this['price'],
-						'bid_quantity': this['quantity']
-					});
-				} else {
-					product['details'][product['details'].length - 1]['bid_quantity'] += this['quantity'];
-				}
-			} else {
-				product['details'][product['details'].length - 1]['best'] = true;
-				product['details'][product['details'].length - 1]['bid'] = this['price'];
-				product['details'][product['details'].length - 1]['bid_quantity'] = this['quantity'];
-			}
-		});
+	    var details = [];
+	    $.each(orders['offers'], function(i, offer) {
+		if(details.length == 0 || details[details.length - 1]['offer'] != offer['price']) {
+		    details.push({
+			'offer': offer['price'],
+			'offer_quantity': offer['quantity']
+		    });
+		} else {
+		    details[details.length - 1]['offer_quantity'] += offer['quantity'];
+		}
+	    });
+	    $.each(orders['bids'], function(i, bid) {
+		if(details.length == 0) {
+		    details.push({
+			'bid': bid['price'],
+			'bid_quantity': bid['quantity']
+		    });
+		    details[details.length - 1]['best'] = true;
+		} else if('bid' in details[details.length - 1]) {
+		    if(details[details.length - 1]['bid'] != bid['price']) {
+			details.push({
+			    'bid': bid['price'],
+			    'bid_quantity': bid['quantity']
+			});
+		    } else {
+			details[details.length - 1]['bid_quantity'] += this['quantity'];
+		    }
+		} else {
+		    details[details.length - 1]['best'] = true;
+		    details[details.length - 1]['bid'] = bid['price'];
+		    details[details.length - 1]['bid_quantity'] = bid['quantity'];
+		}
+	    });
+
+	    product.details = details;
 	};
 	window['Exchng'] = Exchng;
 })();
