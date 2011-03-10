@@ -115,15 +115,17 @@
 					});
 	};
 	Exchng.Product.prototype.sortOrders = function() {
-		var orders = this['orders'];
-		var product = this;
-		orders['offers'].sort(function(a, b) {
-			return a['price'] < b['price'];
-		});
-		orders['bids'].sort(function(a, b) {
-			return a['price'] < b['price'];
-		});
+	    var orders = this['orders'];
+	    var product = this;
+	    orders['offers'].sort(function(a, b) {
+		return a['price'] < b['price'];
+	    });
+	    orders['bids'].sort(function(a, b) {
+		return a['price'] < b['price'];
+	    });
+
 	    var details = [];
+
 	    $.each(orders['offers'], function(i, offer) {
 		if(details.length == 0 || details[details.length - 1]['offer'] != offer['price']) {
 		    details.push({
@@ -134,6 +136,7 @@
 		    details[details.length - 1]['offer_quantity'] += offer['quantity'];
 		}
 	    });
+
 	    $.each(orders['bids'], function(i, bid) {
 		if(details.length == 0) {
 		    details.push({
@@ -157,6 +160,17 @@
 		}
 	    });
 
+	    // make sure best is first
+	    var best = {};
+	    $.each(details, function (i, detail) {
+		if (!detail) return
+		else if (detail['best']) {
+		    best = detail;
+		    details.splice(i, 1);
+		}
+	    });
+
+	    details.unshift(best);
 	    product.details = details;
 	};
 	window['Exchng'] = Exchng;
