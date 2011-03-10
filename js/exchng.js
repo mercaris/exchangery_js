@@ -55,7 +55,6 @@
 			//url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
-			    log(data);
 			    exchng._fetching = false;
 			    callback(data);
 			},
@@ -81,7 +80,14 @@
 	};
 	Exchng.Product.prototype.addOrder = function(order) {
 		var orders = this['orders'];
-		orders[order['side'] + 's'].push({
+	        var side = order['side'];
+	        if (side == 'buy') {
+		    side = 'bid';
+  	        }else if (side == 'sell') {
+		    side = 'offer';
+	        }
+	    
+		orders[side + 's'].push({
 						'id': order['id'],
 						'price': order['price'],
 						'quantity': order['quantity']
