@@ -27,16 +27,22 @@
 						}
 					};
 				});
-				$.each(snapshot['orders'], function() {
-					products[this['product_id']]['orders'][this['side'] + 's'].push({
-						'id': this['id'],
-						'price': this['price'],
-						'quantity': this['quantity']
+			    $.each(snapshot['orders'], function(i, order) {
+				    var side = order['side'];
+				    if (side == 'buy') {
+					side = 'bid';
+  				    }else if (side == 'sell') {
+					side = 'offer';
+				    }
+					products[order['product_id']]['orders'][side + 's'].push({
+						'id': order['id'],
+						'price': order['price'],
+						'quantity': order['quantity']
 					});
 				});
 				exchng.products = {};
-				$.each(products, function(k) {
-					exchng.products[k] = new Exchng.Product(this['id'], this['symbol'], this['orders']);
+			    $.each(products, function(k, product) {
+				exchng.products[k] = new Exchng.Product(product['id'], product['symbol'], product['orders']);
 				});
 				exchng.eventHandler({
 					'name': 'fetch-complete'
