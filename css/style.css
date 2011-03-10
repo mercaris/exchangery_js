@@ -275,6 +275,13 @@ input[type=text] {
     font:400 1em Helvetica, Arial, sans-serif;
     padding:0.6em 1em;
 }
+form .loader {
+    display: none;
+}
+form.loading .loader {
+    display: inline;
+    padding: 0.6em 1em;
+}
 label, input[type=button], input[type=submit], button { 
     cursor:pointer;
 }

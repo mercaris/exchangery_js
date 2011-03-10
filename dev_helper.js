@@ -51,7 +51,7 @@ http.createServer(function (req, res) {
 					   });
 				       });
 	    var request_body = JSON.stringify(body);
-	    console.log('request body: ' + body);
+	    console.log('request body: ' + body+"\n");
 	    request.write(body);
 	    request.end();
 	});

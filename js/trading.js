@@ -8,30 +8,39 @@ $(document).ready(function(){
 	data: JSON.stringify({username : "demo", password : "demo"}),
 	success: function(data) {
 	    console.log(data);
-            load_market();
+            init_market();
 	}
     });	
 });
 
 var exchng;
-function load_market() {
-    exchng= new Exchng("123", function(event) {
+function init_market() {
+    exchng = new Exchng("123", function(event) {
 	switch(event['name']) {
 	case 'fetch-complete':
 	    draw_market();
 	    break;
 	}
     });
-    $('#order').submit(function() {
-	requestData = {
+    $('#order').submit(function(event) {
+	event.preventDefault();
+
+	var $this = $(this);
+
+	if ($this.hasClass("loading")) return;
+
+	$this.addClass("loading");
+
+	var requestData = {
 	    order: {
 		market_id: exchng.marketId,
-		product_id: $('[name=symbol]').val(),
-		side: $('[name=side]').val(),
-		quantity: $('[name=quantity]').val(),
-		price: $('[name=price]').val(),
+		product_id: $this.find('select[name=symbol] option:selected').val(),
+		side: $this.find('select[name=side] option:selected').val(),
+		quantity: $this.find('input[name=quantity]').val(),
+		price: $this.find('input[name=price]').val(),
 	    }
 	};
+
 	$.ajax({
 	    type: 'POST',
 	    url: 'ts/orders', 
@@ -40,15 +49,15 @@ function load_market() {
 	    processData : false,
 	    data: JSON.stringify(requestData),
 	    success: function(data) {
-		console.log(data);
+		$this.find("input[type=text]").val("");
+		$this.removeClass("loading");
 	    }
 	});
-	return false;
     });
     exchng.fetchData();
 
     exchng.beginPoll(function (orders) {
-	$.each(orders.market_update[0].orders, function (index, order) {
+	$.each(orders.market_update.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
 	draw_market();
@@ -65,7 +74,6 @@ function draw_market() {
 	if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
 	    $('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
 	}
-
 	
 	product.sortOrders();
 
