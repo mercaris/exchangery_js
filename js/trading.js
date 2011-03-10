@@ -63,8 +63,8 @@ function init_market() {
 	$.each(orders.market_update.fills, function (index, fill) {
 	    exchng.removeOrder(fill.order_id);
 	});
+
 	draw_market();
-	
     });
 };
 
@@ -75,17 +75,43 @@ function draw_market() {
     $products.empty();
 
     $.each(exchng.products, function (index, product) {
-	if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
-	    $('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
+	if($('#order [name=symbol] option:contains(' + product['symbol'] + ')').removeClass('marked').length == 0) {
+	    $('#order [name=symbol]').append($('<option value=' + product['id'] + '></option>').text(product['symbol']));
 	}
 	
 	product.sortOrders();
 
 	var add_order = function (detail) {
-	    //if (!detail['best']) return;
-
 	    var $tr = $('<tr></tr>');
-	    $tr.append($('<td></td>').text(product['symbol']));
+	    
+	    if (!detail['best']) {
+		$tr.addClass('hidden');
+	    }else{
+		$tr.addClass('best');
+	    }
+	    $tr.addClass('product_'+product.id);
+
+	    var $td = $('<td></td>');
+	    if (!detail['best']) {
+		$td.text(product['symbol']);
+	    }else{
+		$td.html($('<a href="#">'+product['symbol']+'</a>')
+			 .toggle(function (event) {
+			     event.preventDefault();
+			     log('showing!');
+			     $('.product_'+product.id).removeClass('hidden');
+			 },function (event)  {
+			     event.preventDefault();
+			     log('hiding!');
+			     $('.product_'+product.id).each(function (i, item) {
+				 var $item = $(item);
+				 if (!$item.hasClass('best')) {
+				     $item.addClass('hidden');
+				 }
+			     });
+			 }));
+	    }
+	    $tr.append($td);
 
 	    var add_cell = function (i, k) {
 		var $td = $('<td></td>')
