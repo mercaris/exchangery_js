@@ -51,8 +51,8 @@
 		if (!exchng._fetching) {
 		    exchng._fetching = true;
 		    $.ajax({
-			url: '/market_update.json?'+(new Date()).getTime(),
-			//url: 'ts/market_update', 
+			//url: '/market_update.json?'+(new Date()).getTime(),
+			url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
 			    exchng._fetching = false;
