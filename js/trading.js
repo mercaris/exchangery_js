@@ -61,6 +61,11 @@ function init_market() {
 	    exchng.products[order.product_id].addOrder(order);
 	});
 	draw_market();
+	setTimeout(function () {
+	    $.each(orders.market_update.fills, function (index, fill) {
+		exchng.removeOrder(fill.order_id);
+	    })}, 2000);
+	draw_market();
     });
 };
 
@@ -78,7 +83,7 @@ function draw_market() {
 	product.sortOrders();
 
 	var add_order = function (detail) {
-	    if (!detail['best']) return;
+	    //if (!detail['best']) return;
 
 	    var $tr = $('<tr></tr>');
 	    $tr.append($('<td></td>').text(product['symbol']));

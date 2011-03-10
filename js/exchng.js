@@ -51,8 +51,8 @@
 		if (!exchng._fetching) {
 		    exchng._fetching = true;
 		    $.ajax({
-			//url: '/market_update.json?'+(new Date()).getTime(),
-			url: 'ts/market_update', 
+			url: '/market_update.json?'+(new Date()).getTime(),
+			//url: 'ts/market_update', 
 			dataType: 'json',
 			success: function(data) {
 			    exchng._fetching = false;
@@ -68,6 +68,20 @@
 	    
 	    setInterval(poll, 10000);
 	};
+    Exchng.prototype.removeOrder = function (target_id) {
+	var exchng = this;
+	$.each(exchng.products, function (i, product) {
+	    $.each(product.orders, function (side, orders) {
+		$.each(product.orders[side], function (i, order) {
+		    if (order.id == target_id) {
+			log("splicing", side, order);
+			product.orders[side].splice(i, 1);
+			log(product.orders[side]);
+		    }
+		});
+	    });
+	});
+    };
 	Exchng.Product = function(id, symbol, orders) {
 		var product = this;
 		this['id'] = id;
