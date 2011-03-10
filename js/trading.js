@@ -81,34 +81,22 @@ function draw_market() {
 	
 	product.sortOrders();
 
-	var add_order = function (detail) {
+	var add_order = function (detail, $target) {
 	    var $tr = $('<tr></tr>');
 	    
-	    if (!detail['best']) {
-		$tr.addClass('hidden');
-	    }else{
-		$tr.addClass('best');
-	    }
-	    $tr.addClass('product_'+product.id);
-
 	    var $td = $('<td></td>');
+	    $td.css('width', '20%');
+
 	    if (!detail['best']) {
 		$td.text(product['symbol']);
 	    }else{
 		$td.html($('<a href="#">'+product['symbol']+'</a>')
 			 .toggle(function (event) {
 			     event.preventDefault();
-			     log('showing!');
-			     $('.product_'+product.id).removeClass('hidden');
+			     $('#childrenOf_'+product.id).removeClass('hidden');
 			 },function (event)  {
 			     event.preventDefault();
-			     log('hiding!');
-			     $('.product_'+product.id).each(function (i, item) {
-				 var $item = $(item);
-				 if (!$item.hasClass('best')) {
-				     $item.addClass('hidden');
-				 }
-			     });
+			     $('#childrenOf_'+product.id).addClass('hidden');
 			 }));
 	    }
 	    $tr.append($td);
@@ -123,12 +111,23 @@ function draw_market() {
 
 	    $.each(['bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
 
-	    $products.append($tr);
+	    $target.append($tr);
 	}
 	
-	$.each(product.details, function (index, detail) {
-	    add_order(detail);
+	add_order(product.details.shift(), $products);
+
+	var $children = $('<table></table>');
+	$children.addClass('order_children');
+	$.each(product.details, function (i, detail) {
+	    add_order(detail, $children);
 	});
+
+	var $row = $('<tr></tr>');
+	$row.addClass('hidden');
+	$row.attr('id', 'childrenOf_'+product.id);
+	$row.append($('<td></td>').attr('colspan', 5).append($children));
+
+	$products.append($row);
     });
 }
 
