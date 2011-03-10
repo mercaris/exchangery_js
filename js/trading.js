@@ -72,7 +72,7 @@ function draw_market() {
 	product.sortOrders();
 
 	var add_order = function (detail) {
-	    //if (!detail['best']) return;
+	    if (!detail['best']) return;
 
 	    var $tr = $('<tr></tr>');
 	    $tr.append($('<td></td>').text(product['symbol']));
