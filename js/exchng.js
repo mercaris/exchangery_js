@@ -28,7 +28,8 @@
 					};
 				});
 				$.each(snapshot['orders'], function() {
-					products[this['product_id']]['orders'][this['side'] + 's'].push({
+				    var order_list = this['side'] == 'buy' ? 'bids' : 'offers';
+					products[this['product_id']]['orders'][order_list].push({
 						'id': this['id'],
 						'price': this['price'],
 						'quantity': this['quantity']
