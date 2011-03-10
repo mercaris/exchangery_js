@@ -68,6 +68,21 @@
 	    
 	    setInterval(poll, 10000);
 	};
+    Exchng.prototype.removeOrder = function (target_id) {
+	var exchng = this;
+	// TODO this walk isn't the prettiest thing out there
+	// might also turn out to be slow when the market is big
+	// should probably maintain some sort of order_id hashmap
+	$.each(exchng.products, function (i, product) {
+	    $.each(product.orders, function (side, orders) {
+		$.each(product.orders[side], function (i, order) {
+		    if (order.id == target_id) {
+			product.orders[side].splice(i, 1);
+		    }
+		});
+	    });
+	});
+    };
 	Exchng.Product = function(id, symbol, orders) {
 		var product = this;
 		this['id'] = id;
