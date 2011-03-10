@@ -26,6 +26,11 @@ function init_market() {
 	event.preventDefault();
 
 	var $this = $(this);
+
+	if ($this.hasClass("loading")) return;
+
+	$this.addClass("loading");
+
 	var requestData = {
 	    order: {
 		market_id: exchng.marketId,
@@ -44,7 +49,8 @@ function init_market() {
 	    processData : false,
 	    data: JSON.stringify(requestData),
 	    success: function(data) {
-		console.log(data);
+		$this.find("input[type=text]").val("");
+		$this.removeClass("loading");
 	    }
 	});
     });
@@ -72,7 +78,7 @@ function draw_market() {
 	product.sortOrders();
 
 	var add_order = function (detail) {
-	    if (!detail['best']) return;
+	    //if (!detail['best']) return;
 
 	    var $tr = $('<tr></tr>');
 	    $tr.append($('<td></td>').text(product['symbol']));
