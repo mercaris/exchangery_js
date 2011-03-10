@@ -60,12 +60,11 @@ function init_market() {
 	$.each(orders.market_update.orders, function (index, order) {
 	    exchng.products[order.product_id].addOrder(order);
 	});
+	$.each(orders.market_update.fills, function (index, fill) {
+	    exchng.removeOrder(fill.order_id);
+	});
 	draw_market();
-	setTimeout(function () {
-	    $.each(orders.market_update.fills, function (index, fill) {
-		exchng.removeOrder(fill.order_id);
-	    })}, 2000);
-	draw_market();
+	
     });
 };
 
