@@ -27,16 +27,22 @@
 						}
 					};
 				});
-				$.each(snapshot['orders'], function() {
-					products[this['product_id']]['orders'][this['side'] + 's'].push({
-						'id': this['id'],
-						'price': this['price'],
-						'quantity': this['quantity']
+			    $.each(snapshot['orders'], function(i, order) {
+				    var side = order['side'];
+				    if (side == 'buy') {
+					side = 'bid';
+  				    }else if (side == 'sell') {
+					side = 'offer';
+				    }
+					products[order['product_id']]['orders'][side + 's'].push({
+						'id': order['id'],
+						'price': order['price'],
+						'quantity': order['quantity']
 					});
 				});
 				exchng.products = {};
-				$.each(products, function(k) {
-					exchng.products[k] = new Exchng.Product(this['id'], this['symbol'], this['orders']);
+			    $.each(products, function(k, product) {
+				exchng.products[k] = new Exchng.Product(product['id'], product['symbol'], product['orders']);
 				});
 				exchng.eventHandler({
 					'name': 'fetch-complete'
@@ -109,47 +115,63 @@
 					});
 	};
 	Exchng.Product.prototype.sortOrders = function() {
-		var orders = this['orders'];
-		var product = this;
-		orders['offers'].sort(function(a, b) {
-			return a['price'] < b['price'];
-		});
-		orders['bids'].sort(function(a, b) {
-			return a['price'] < b['price'];
-		});
-		this['details'] = [];
-		$.each(orders['offers'], function() {
-			if(product['details'].length == 0 || product['details'][product['details'].length - 1]['offer'] != this['price']) {
-				product['details'].push({
-					'offer': this['price'],
-					'offer_quantity': this['quantity']
-				});
-			} else {
-				product['details'][product['details'].length - 1]['offer_quantity'] += this['quantity'];
-			}
-		});
-		$.each(orders['bids'], function() {
-			if(product['details'].length == 0) {
-				product['details'].push({
-					'bid': this['price'],
-					'bid_quantity': this['quantity']
-				});
-				product['details'][product['details'].length - 1]['best'] = true;
-			} else if('bid' in product['details'][product['details'].length - 1]) {
-				if(product['details'][product['details'].length - 1]['bid'] != this['price']) {
-					product['details'].push({
-						'bid': this['price'],
-						'bid_quantity': this['quantity']
-					});
-				} else {
-					product['details'][product['details'].length - 1]['bid_quantity'] += this['quantity'];
-				}
-			} else {
-				product['details'][product['details'].length - 1]['best'] = true;
-				product['details'][product['details'].length - 1]['bid'] = this['price'];
-				product['details'][product['details'].length - 1]['bid_quantity'] = this['quantity'];
-			}
-		});
+	    var orders = this['orders'];
+	    var product = this;
+	    orders['offers'].sort(function(a, b) {
+		return a['price'] < b['price'];
+	    });
+	    orders['bids'].sort(function(a, b) {
+		return a['price'] < b['price'];
+	    });
+
+	    var details = [];
+
+	    $.each(orders['offers'], function(i, offer) {
+		if(details.length == 0 || details[details.length - 1]['offer'] != offer['price']) {
+		    details.push({
+			'offer': offer['price'],
+			'offer_quantity': offer['quantity']
+		    });
+		} else {
+		    details[details.length - 1]['offer_quantity'] += offer['quantity'];
+		}
+	    });
+
+	    $.each(orders['bids'], function(i, bid) {
+		if(details.length == 0) {
+		    details.push({
+			'bid': bid['price'],
+			'bid_quantity': bid['quantity']
+		    });
+		    details[details.length - 1]['best'] = true;
+		} else if('bid' in details[details.length - 1]) {
+		    if(details[details.length - 1]['bid'] != bid['price']) {
+			details.push({
+			    'bid': bid['price'],
+			    'bid_quantity': bid['quantity']
+			});
+		    } else {
+			details[details.length - 1]['bid_quantity'] += this['quantity'];
+		    }
+		} else {
+		    details[details.length - 1]['best'] = true;
+		    details[details.length - 1]['bid'] = bid['price'];
+		    details[details.length - 1]['bid_quantity'] = bid['quantity'];
+		}
+	    });
+
+	    // make sure best is first
+	    var best = {};
+	    $.each(details, function (i, detail) {
+		if (!detail) return
+		else if (detail['best']) {
+		    best = detail;
+		    details.splice(i, 1);
+		}
+	    });
+
+	    details.unshift(best);
+	    product.details = details;
 	};
 	window['Exchng'] = Exchng;
 })();

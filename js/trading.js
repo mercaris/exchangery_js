@@ -63,8 +63,8 @@ function init_market() {
 	$.each(orders.market_update.fills, function (index, fill) {
 	    exchng.removeOrder(fill.order_id);
 	});
+
 	draw_market();
-	
     });
 };
 
@@ -75,17 +75,31 @@ function draw_market() {
     $products.empty();
 
     $.each(exchng.products, function (index, product) {
-	if($('#order [name=symbol] option:contains(' + this['symbol'] + ')').removeClass('marked').length == 0) {
-	    $('#order [name=symbol]').append($('<option value=' + this['id'] + '></option>').text(this['symbol']));
+	if($('#order [name=symbol] option:contains(' + product['symbol'] + ')').removeClass('marked').length == 0) {
+	    $('#order [name=symbol]').append($('<option value=' + product['id'] + '></option>').text(product['symbol']));
 	}
 	
 	product.sortOrders();
 
-	var add_order = function (detail) {
-	    //if (!detail['best']) return;
-
+	var add_order = function (detail, $target) {
 	    var $tr = $('<tr></tr>');
-	    $tr.append($('<td></td>').text(product['symbol']));
+	    
+	    var $td = $('<td></td>');
+	    $td.css('width', '20%');
+
+	    if (!detail['best']) {
+		$td.text(product['symbol']);
+	    }else{
+		$td.html($('<a href="#">'+product['symbol']+'</a>')
+			 .toggle(function (event) {
+			     event.preventDefault();
+			     $('#childrenOf_'+product.id).removeClass('hidden');
+			 },function (event)  {
+			     event.preventDefault();
+			     $('#childrenOf_'+product.id).addClass('hidden');
+			 }));
+	    }
+	    $tr.append($td);
 
 	    var add_cell = function (i, k) {
 		var $td = $('<td></td>')
@@ -97,12 +111,26 @@ function draw_market() {
 
 	    $.each(['bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
 
-	    $products.append($tr);
+	    $target.append($tr);
+	}
+
+	var add_children = function (orders, $target) {
+	    var $children = $('<table></table>');
+	    $children.css('width', '100%');
+	    $.each(product.details, function (i, detail) {
+		add_order(detail, $children);
+	    });
+
+	    var $row = $('<tr></tr>');
+	    $row.addClass('hidden');
+	    $row.attr('id', 'childrenOf_'+product.id);
+	    $row.append($('<td></td>').attr('colspan', 5).append($children));
+	    
+	    $products.append($row);
 	}
 	
-	$.each(product.details, function (index, detail) {
-	    add_order(detail);
-	});
+	add_order(product.details.shift(), $products);
+	add_children(product.details, $products);
     });
 }
 
