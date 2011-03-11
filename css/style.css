@@ -364,10 +364,6 @@ td {
     width:80%;
     margin:0 auto;
 }
-.order_children {
-   width: 100%;
-   transition: all ease-in-out 500ms;
-}
 
 /* 
     07 - Embeds

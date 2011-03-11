@@ -93,10 +93,10 @@ function draw_market() {
 		$td.html($('<a href="#">'+product['symbol']+'</a>')
 			 .toggle(function (event) {
 			     event.preventDefault();
-			     $('#childrenOf_'+product.id).removeClass('hidden');
+			     $('#childrenOf_'+product.id).fadeIn();
 			 },function (event)  {
 			     event.preventDefault();
-			     $('#childrenOf_'+product.id).addClass('hidden');
+			     $('#childrenOf_'+product.id).fadeOut();
 			 }));
 	    }
 	    $tr.append($td);
@@ -117,13 +117,14 @@ function draw_market() {
 	add_order(product.details.shift(), $products);
 
 	var $children = $('<table></table>');
-	$children.addClass('order_children');
+	$children.css('width', '100%');
 	$.each(product.details, function (i, detail) {
 	    add_order(detail, $children);
 	});
 
 	var $row = $('<tr></tr>');
 	$row.addClass('hidden');
+	log($row.height());
 	$row.attr('id', 'childrenOf_'+product.id);
 	$row.append($('<td></td>').attr('colspan', 5).append($children));
 
