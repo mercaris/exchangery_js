@@ -27,14 +27,10 @@
 						}
 					};
 				});
+			    
 			    $.each(snapshot['orders'], function(i, order) {
-				    var side = order['side'];
-				    if (side == 'buy') {
-					side = 'bid';
-  				    }else if (side == 'sell') {
-					side = 'offer';
-				    }
-					products[order['product_id']]['orders'][side + 's'].push({
+				var order_list = this['side'] == 'buy' ? 'bids' : 'offers';
+					products[order['product_id']]['orders'][order_list].push({
 						'id': order['id'],
 						'price': order['price'],
 						'quantity': order['quantity']
