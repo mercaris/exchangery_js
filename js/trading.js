@@ -93,10 +93,10 @@ function draw_market() {
 		$td.html($('<a href="#">'+product['symbol']+'</a>')
 			 .toggle(function (event) {
 			     event.preventDefault();
-			     $('#childrenOf_'+product.id).fadeIn();
+			     $('#childrenOf_'+product.id).removeClass('hidden');
 			 },function (event)  {
 			     event.preventDefault();
-			     $('#childrenOf_'+product.id).fadeOut();
+			     $('#childrenOf_'+product.id).addClass('hidden');
 			 }));
 	    }
 	    $tr.append($td);
@@ -113,22 +113,24 @@ function draw_market() {
 
 	    $target.append($tr);
 	}
+
+	var add_children = function (orders, $target) {
+	    var $children = $('<table></table>');
+	    $children.css('width', '100%');
+	    $.each(product.details, function (i, detail) {
+		add_order(detail, $children);
+	    });
+
+	    var $row = $('<tr></tr>');
+	    $row.addClass('hidden');
+	    $row.attr('id', 'childrenOf_'+product.id);
+	    $row.append($('<td></td>').attr('colspan', 5).append($children));
+	    
+	    $products.append($row);
+	}
 	
 	add_order(product.details.shift(), $products);
-
-	var $children = $('<table></table>');
-	$children.css('width', '100%');
-	$.each(product.details, function (i, detail) {
-	    add_order(detail, $children);
-	});
-
-	var $row = $('<tr></tr>');
-	$row.addClass('hidden');
-	log($row.height());
-	$row.attr('id', 'childrenOf_'+product.id);
-	$row.append($('<td></td>').attr('colspan', 5).append($children));
-
-	$products.append($row);
+	add_children(product.details, $products);
     });
 }
 
