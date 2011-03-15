@@ -1,20 +1,371 @@
-var lastSelected = $("#products");
-var lastClicked = $("#products_select");
-function reveal(selected){
-    lastSelected.css('visibility','hidden').css('display','none'); 
-    selected.css('visibility','visible').css('display','block');
-    lastSelected = selected;
+/*
+ * Constructor for a client to an Exchangery exchange. Takes a market id (String) as an argument.
+ */
+function ExchangeClient(marketId) {
+    this.marketId = marketId;
+    this.products = {};
+    this.fetching = false;
+    this.authenticated = false;
+    this.bestOrderUpdateListeners = [];
 }
-function navOn(clicked) {
-    lastClicked.removeClass("navOn");
-    clicked.addClass("navOn");
-    lastClicked = clicked;
+
+/*
+ * Before any other actions can take place, the exchange client must log in with a valid username and password (Strings)
+ */
+ExchangeClient.prototype.login = function(username, password, callback) {
+    var exchange = this;
+    $.ajax({
+	type: 'POST',
+	url: 'ts/login', 
+	contentType: 'application/json; charset=utf-8', 
+	dataType: 'json',
+	processData : false,
+	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
+	success: function(data) {
+	    console.log(data);
+	    exchange.authenticated = true;
+	    callback();
+	}
+    });
+};
+
+/*
+ * Market Snapshot fetches the current state of the market from the server. This must be done before an order grid can be drawn.
+ */
+ExchangeClient.prototype.marketSnapshot = function(callback) {
+    var exchange = this;
+    if (!exchange.authenticated){
+	console.log("cannot fetch market snapshot, user is not authenticated");
+	return;
+    }
+    exchange.fetching = true;
+    
+    $.get('ts/market_snapshot', {
+	'market_id': exchange.marketId
+    }, function(data, textStatus) {
+	if(textStatus == 'success') {
+	    
+	    var snapshot = data['snapshot'];
+	    var market = snapshot['market'];
+	    var products = {};
+	    
+	    $.each(snapshot['products'], function(i, product) {
+		products[product.id] = {
+		    'id': product.id,
+		    'symbol': product.symbol,
+		    'orders': {
+			'offers': [],
+			'bids': []
+		    }
+		};
+	    });
+	    
+	    $.each(snapshot['orders'], function(i, order) {
+		var order_list = order['side'] == 'buy' ? 'bids' : 'offers';
+		products[order['product_id']]['orders'][order_list].push({
+		    'id': order['id'],
+		    'price': order['price'],
+		    'quantity': order['quantity']
+		});
+	    });
+	    
+	    exchange.products = {};
+	    $.each(products, function(i, product) {
+		exchange.products[i] = new ExchangeClient.Product(exchange, product['id'], product['symbol'], product['orders']);
+	    });		
+	}
+	exchange.fetching = false;
+	callback();
+    }, 'json');
+};
+
+/*
+ * Market Update fetches the most recent market events from the server. It polls, so it only needs to be called once.
+ */
+ExchangeClient.prototype.marketUpdate = function(callback) {
+    var exchange = this;
+    if (!exchange.authenticated){
+	console.log("cannot fetch market update, user is not authenticated");
+	return;
+    }
+
+    var poll = function () {
+	if (!exchange.fetching) {
+	    exchange.fetching = true;
+	    $.ajax({
+		url: 'ts/market_update', 
+		dataType: 'json',
+		success: function(data) {
+		    $.each(data.market_update.orders, function (i, order) {
+			exchange.products[order.product_id].addOrder(order);
+		    });
+		    $.each(data.market_update.fills, function (i, fill) {
+			exchange.products[fill.product_id].removeOrder(fill);
+		    });
+		    exchange.fetching = false;
+		},
+		error: function (error) {
+		    exchange.fetching = false;
+		    log("error polling", error.statusText);
+		}
+	    });
+	    callback();
+	}
+    }
+    setInterval(poll, 5000);
+};
+
+/*
+ * Get notified when a new best bid or offer is received. callback method should take a productId as a parameter.
+ */
+ExchangeClient.prototype.registerBestOrderUpdateListener = function(that, callback) {
+    var exchange = this;
+    exchange.bestOrderUpdateListeners.push([that, callback]);
+};
+
+/*
+ * Notification when a new best bid or offer is received. 
+ */
+ExchangeClient.prototype.notifyBestOrderListeners = function(productId) {
+    var exchange = this;
+    $.each(exchange.bestOrderUpdateListeners, function(i, args) {
+	var that = args[0];
+	var callback = args[1];
+	callback.call(that, productId);
+    });
+};
+
+/*
+ * Place an order
+ */
+ExchangeClient.prototype.placeOrder = function(productId, side, quantity, price, callback) {
+    var exchange = this;
+    var requestData = {
+	    order: {
+		'market_id' : exchange.marketId,
+		'product_id' : productId,
+		'side' : side,
+		'quantity' : quantity,
+		'price' : price
+	    }
+	};
+
+    $.ajax({
+	type: 'POST',
+	url: 'ts/orders', 
+	contentType: 'application/json; charset=utf-8', 
+	dataType: 'json',
+	processData : false,
+	data: JSON.stringify(requestData),
+	success: function(data) {
+	    callback();
+	}
+    });
+};
+
+/*
+ * Represents a product, consists of a product id, a symbol, a list of buy orders (bids) and a list of sell orders (offers)
+ */
+ExchangeClient.Product = function(exchange, id, symbol, orders) {
+    var product = this;
+    product.exchange = exchange;
+    product.id = id;
+    product.symbol = symbol;
+    product.orders = {
+	'offers': orders['offers'].slice(0),
+	'bids': orders['bids'].slice(0)
+    };
+    this.sortOrders();
+};
+
+/*
+ * get a list of the product ids
+ */
+ExchangeClient.prototype.getProductIds = function() {
+    var exchange = this;
+    var productIds = [];
+    $.each(exchange.products, function(i, product) {
+	productIds.push(product.id);
+    });
+    return productIds;
+};
+
+/*
+ * get the symbol for the given product id
+ */
+ExchangeClient.prototype.getSymbol = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product){
+	return product.symbol;
+    }
+    else {
+	return '';
+    }
+};
+
+/*
+ * get the quantity from the highest priced buy order for the given product
+ */
+ExchangeClient.prototype.getBestBidQuantity = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product){
+	var bids = product.orders.bids;
+	if (bids.length > 0){
+	    var price = bids[0].price;
+	    var ordersAtPrice = function(order) {
+		return order.price == price;
+	    };
+	    var best_bids = bids.filter(ordersAtPrice);
+	    return combinedOrderQuantity(best_bids);
+	}
+    }
+    return '';    
+};
+
+
+/*
+ * get the price from the highest priced buy order for the given product
+ */
+ExchangeClient.prototype.getBestBidPrice = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product){
+	var bids = product.orders.bids;
+	if (bids.length > 0){
+	    return bids[0].price;	   
+	}
+    }
+    return '';    
+};
+
+/*
+ * get the quantity from the lowest priced sell order for the given product
+ */
+ExchangeClient.prototype.getBestOfferPrice = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product){
+	var offers = product.orders.offers;
+	if (offers.length > 0){
+	    return offers[offers.length - 1].price;	   
+	}
+    }
+    return '';    
+};
+
+/*
+ * get the quantity from the lowest priced sell order for the given product
+ */
+ExchangeClient.prototype.getBestOfferQuantity = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product){
+	var offers = product.orders.offers;
+	if (offers.length > 0){
+	    var price = offers[offers.length - 1].price;
+	    var ordersAtPrice = function(order) {
+		return order.price == price;
+	    };
+	    var best_offers = offers.filter(ordersAtPrice);
+	    return combinedOrderQuantity(best_offers);
+	}
+    }
+    return '';    
+};
+
+
+
+/*
+ * Add an order to a product.
+ */
+ExchangeClient.Product.prototype.addOrder = function(order) {
+    var product = this;
+    var orders = product['orders'];
+    var orderList = orders[order['side'] == 'buy' ? 'bids' : 'offers'];
+    var bestOrder = isBestOrder(order, orderList);
+    orderList.push({
+	'id': order['id'],
+	'price': order['price'],
+	'quantity': order['quantity']
+    });
+    product.sortOrders();
+    if (bestOrder) {
+	product.exchange.notifyBestOrderListeners(product.id);
+    }
+};
+
+/*
+ * Removes an order, to be called on cancel or fill
+ */
+ExchangeClient.Product.prototype.removeOrder = function (fill) {
+    var product = this;
+
+    // check bids
+    var bids = product.orders.bids;
+    $.each(bids, function (i, order) {
+	if (order.id == fill.order_id) {
+	    if (isBestOrder(order, bids)) {
+		product.exchange.notifyBestOrderListeners(product.id);
+	    }
+	    product.orders.bids.splice(i, 1);
+	}
+    });
+
+    // check offers
+    var offers = product.orders.offers;
+    $.each(offers, function (i, order) {
+	if (order.id == fill.order_id) {
+	    if (isBestOrder(order, bids)) {
+		product.exchange.notifyBestOrderListeners(product.id);
+	    }
+	    product.orders.offers.splice(i, 1);
+	}
+    });
+};
+
+/*
+ * Sort orders for a product.
+ */
+ExchangeClient.Product.prototype.sortOrders = function() {
+    var product = this;
+    var orders = product.orders;
+    orders['offers'].sort(function(a, b) {
+	return a['price'] < b['price'];
+    });
+    orders['bids'].sort(function(a, b) {
+	return a['price'] < b['price'];
+    });
+};
+
+
+
+/*
+ * utility functions
+ */
+
+function combinedOrderQuantity(orders) {
+
+    var quantity = 0;
+    $.each(orders, function(i, order) {
+	quantity += order.quantity;
+    });
+    return quantity;
 }
-$(document).ready(function(){
-    $("#products_select").click(function(){navOn($(this)); reveal($("#products"));});
-    $("#accounts_select").click(function(){navOn($(this)); reveal($("#accounts"));});
-    $("#risk_select").click(function(){navOn($(this)); reveal($("#risk"));});
-    $("#trading_select").click(function(){navOn($(this)); reveal($("#trading"));});
-    navOn($("#products_select"));
-    reveal($("#products"));
-});
+
+
+function isBestOrder(order, orderList) {
+
+    var bestOrder = false;
+    if (orderList.length == 0) {
+	bestOrder = true;
+    }
+    else if (order['side'] == 'buy') {
+	bestOrder = order.price >= orderList[0].price; 
+    }
+    else if (order['side'] == 'sell') {
+	bestOrder = order.price <= orderList[orderList.length - 1].price; 
+    }
+    return bestOrder;
+}

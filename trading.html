@@ -50,7 +50,7 @@
     <div id="body">
         <div class="inner">
 
-	  <table id="products"> 
+	  <table id="order_grid"> 
 	    <thead> 
 	      <tr> 
 		<td width="20%">product</td> 
@@ -64,7 +64,7 @@
 	    </tbody> 
 	  </table> 
 
-            <form id="order">
+            <form id="order_form">
                 <label>Symbol:</label>
                 <select type="text" id="symbol" name="symbol"></select>
 
@@ -115,8 +115,18 @@
     <!-- script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script -->
     <script>!window.jQuery && document.write('<script src="js/jquery.js"><\/script>')</script>
     <script src="js/plugins.js" type="text/javascript"></script>
-    <script src="js/exchng.js" type="text/javascript"></script>
-    <script src="js/trading.js" type="text/javascript"></script>
-    <script type="text/javascript" src="js/newsletter.js"></script>	
+    <script src="js/exchangery.js" type="text/javascript"></script>
+    <script src="js/trading_screen.js" type="text/javascript"></script>
+    <script src="js/newsletter.js" type="text/javascript" ></script>	
+    <script type="text/javascript">
+      
+      $(document).ready(function(){
+        
+        var ts = new TradingScreen("order_grid", "order_form");
+        ts.connect("123", "demo1", "demo1");
+
+      });
+
+    </script>
 </body>
 </html>
