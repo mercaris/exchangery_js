@@ -73,7 +73,6 @@ TradingScreen.prototype.fillRow = function(productId) {
 	var val = details[1];
 	var tdid = name + '_cell_' + productId;
 	var $td = $('#' + tdid);
-	//console.log('updating ' + tdid + ' to ' + val);
 	$td.html(val);
     };
     $.each([
@@ -90,7 +89,7 @@ TradingScreen.prototype.fillRow = function(productId) {
  */
 TradingScreen.prototype.beginPolling = function() {
     var tradingScreen = this;
-    tradingScreen.exchange.marketUpdate(function() { console.log("finished market update, polling"); });
+    tradingScreen.exchange.marketUpdate(function() { });
 };
 
 /*
@@ -125,7 +124,7 @@ TradingScreen.prototype.placeOrder = function() {
 	tradingScreen.orderForm.find("input[type=text]").val("");
 	tradingScreen.orderForm.removeClass("loading");
 	if (result == "error") {
-	    console.log(messages);
+	    
 	}
     });
 };

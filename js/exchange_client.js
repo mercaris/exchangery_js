@@ -21,8 +21,7 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	dataType: 'json',
 	processData : false,
 	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
-	success: function(data) {
-	    console.log(data);
+	success: function(data) {	    
 	    exchange.authenticated = true;
 	    callback();
 	}
@@ -35,7 +34,6 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 ExchangeClient.prototype.marketSnapshot = function(callback) {
     var exchange = this;
     if (!exchange.authenticated){
-	console.log("cannot fetch market snapshot, user is not authenticated");
 	return;
     }
     exchange.fetching = true;
@@ -81,7 +79,6 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 ExchangeClient.prototype.marketUpdate = function(callback) {
     var exchange = this;
     if (!exchange.authenticated){
-	console.log("cannot fetch market update, user is not authenticated");
 	return;
     }
 
@@ -323,11 +320,9 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
     var bids = product.orders.bids;
     $.each(bids, function (i, order) {	
 	if (order.id == fill.order_id) {
-	    console.log('removing order id ' + order.id);
 	    var best = isBestOrder(order, bids);	    	    
 	    product.orders.bids.splice(i, 1);
 	    if (best) {
-		console.log('notifying listeners of change to best bid ' + order.id);
 		product.exchange.notifyBestOrderListeners(product.id);
 	    }
 	    return false; // equivelant of break
@@ -338,11 +333,9 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
     var offers = product.orders.offers;
     $.each(offers, function (i, order) {
 	if (order.id == fill.order_id) {
-	    console.log('removing order id ' + order.id);
 	    var best = isBestOrder(order, offers);
 	    product.orders.offers.splice(i, 1);
 	    if (best) {
-		console.log('notifying listeners of change to best bid ' + order.id);
 		product.exchange.notifyBestOrderListeners(product.id);
 	    }
 	    return false; // equivelant of break
