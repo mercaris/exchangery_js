@@ -35,8 +35,8 @@ http.createServer(function (req, res) {
 	    }
 	    //'theexchangery.com'
 	    var cookie = { cookie : req.headers.cookie };
-	    //var options = {host: '127.0.0.1', port: 8000, method: req.method, path: pathquery, headers: cookie};
-	    var options = {host: 'theexchangery.com', port: 80, method: req.method, path: pathquery, headers: cookie};
+	    var options = {host: '127.0.0.1', port: 8000, method: req.method, path: pathquery, headers: cookie};
+	    //var options = {host: 'theexchangery.com', port: 80, method: req.method, path: pathquery, headers: cookie};
 	    console.log('making request: ' + JSON.stringify(options));
 	    var request = http.request(options, 
 				       function (res) {

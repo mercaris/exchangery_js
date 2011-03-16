@@ -62,11 +62,7 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 	    
 	    $.each(snapshot['orders'], function(i, order) {
 		var order_list = order['side'] == 'buy' ? 'bids' : 'offers';
-		products[order['product_id']]['orders'][order_list].push({
-		    'id': order['id'],
-		    'price': order['price'],
-		    'quantity': order['quantity']
-		});
+		products[order['product_id']]['orders'][order_list].push(order);
 	    });
 	    
 	    exchange.products = {};
@@ -98,6 +94,9 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		success: function(data) {
 		    $.each(data.market_update.orders, function (i, order) {
 			exchange.products[order.product_id].addOrder(order);
+		    });
+		    $.each(data.market_update.updated_orders, function (i, order) {
+			exchange.products[order.product_id].replaceOrder(order);
 		    });
 		    $.each(data.market_update.fills, function (i, fill) {
 			exchange.products[fill.product_id].removeOrder(fill);
@@ -158,8 +157,8 @@ ExchangeClient.prototype.placeOrder = function(productId, side, quantity, price,
 	processData : false,
 	data: JSON.stringify(requestData),
 	success: function(data) {
-	    callback();
-	}
+	    callback(data.result, data.errors);
+	},
     });
 };
 
@@ -275,8 +274,6 @@ ExchangeClient.prototype.getBestOfferQuantity = function(productId) {
     return '';    
 };
 
-
-
 /*
  * Add an order to a product.
  */
@@ -285,16 +282,36 @@ ExchangeClient.Product.prototype.addOrder = function(order) {
     var orders = product['orders'];
     var orderList = orders[order['side'] == 'buy' ? 'bids' : 'offers'];
     var bestOrder = isBestOrder(order, orderList);
-    orderList.push({
-	'id': order['id'],
-	'price': order['price'],
-	'quantity': order['quantity']
-    });
+    orderList.push(order);
     product.sortOrders();
     if (bestOrder) {
 	product.exchange.notifyBestOrderListeners(product.id);
     }
 };
+
+/*
+ * Replace an order that has been updated.
+ */
+ExchangeClient.Product.prototype.replaceOrder = function(order) {
+    var product = this;
+    var orders = product['orders'];
+    var orderList = orders[order['side'] == 'buy' ? 'bids' : 'offers'];
+    var bestOrder = isBestOrder(order, orderList);
+    var index = -1;
+    $.each(orderList, function(i, o) {
+	if (o.id == order.id){
+	    index = i;
+	    return false;
+	}
+    });
+    if (index >= 0){
+	orderList.splice(index,1,order);
+    }
+    if (bestOrder) {
+	product.exchange.notifyBestOrderListeners(product.id);
+    }
+};
+
 
 /*
  * Removes an order, to be called on cancel or fill
@@ -304,12 +321,16 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
 
     // check bids
     var bids = product.orders.bids;
-    $.each(bids, function (i, order) {
+    $.each(bids, function (i, order) {	
 	if (order.id == fill.order_id) {
-	    if (isBestOrder(order, bids)) {
+	    console.log('removing order id ' + order.id);
+	    var best = isBestOrder(order, bids);	    	    
+	    product.orders.bids.splice(i, 1);
+	    if (best) {
+		console.log('notifying listeners of change to best bid ' + order.id);
 		product.exchange.notifyBestOrderListeners(product.id);
 	    }
-	    product.orders.bids.splice(i, 1);
+	    return false; // equivelant of break
 	}
     });
 
@@ -317,10 +338,14 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
     var offers = product.orders.offers;
     $.each(offers, function (i, order) {
 	if (order.id == fill.order_id) {
-	    if (isBestOrder(order, bids)) {
+	    console.log('removing order id ' + order.id);
+	    var best = isBestOrder(order, offers);
+	    product.orders.offers.splice(i, 1);
+	    if (best) {
+		console.log('notifying listeners of change to best bid ' + order.id);
 		product.exchange.notifyBestOrderListeners(product.id);
 	    }
-	    product.orders.offers.splice(i, 1);
+	    return false; // equivelant of break
 	}
     });
 };
@@ -346,17 +371,15 @@ ExchangeClient.Product.prototype.sortOrders = function() {
  */
 
 function combinedOrderQuantity(orders) {
-
     var quantity = 0;
     $.each(orders, function(i, order) {
-	quantity += order.quantity;
+	quantity += displayQuantity(order);
     });
     return quantity;
 }
 
 
 function isBestOrder(order, orderList) {
-
     var bestOrder = false;
     if (orderList.length == 0) {
 	bestOrder = true;
@@ -368,4 +391,8 @@ function isBestOrder(order, orderList) {
 	bestOrder = order.price <= orderList[orderList.length - 1].price; 
     }
     return bestOrder;
+}
+
+function displayQuantity(order) {
+    return order.quantity - order.filled_quantity;
 }

@@ -121,9 +121,12 @@ TradingScreen.prototype.placeOrder = function() {
     var quantity = tradingScreen.orderForm.find('input[name=quantity]').val();
     var price = tradingScreen.orderForm.find('input[name=price]').val();
 
-    tradingScreen.exchange.placeOrder(productId, side, quantity, price, function() {
+    tradingScreen.exchange.placeOrder(productId, side, quantity, price, function(result, messages) {
 	tradingScreen.orderForm.find("input[type=text]").val("");
 	tradingScreen.orderForm.removeClass("loading");
+	if (result == "error") {
+	    console.log(messages);
+	}
     });
 };
     
