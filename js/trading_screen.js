@@ -14,7 +14,10 @@ function TradingScreen(gridId, orderFormId) {
 TradingScreen.prototype.connect = function(marketId, username, password) {
     var tradingScreen = this;
     tradingScreen.exchange = new ExchangeClient(marketId);
-    tradingScreen.exchange.login(username, password, function() { tradingScreen.initMarket(); });
+    tradingScreen.exchange.login(username, password, 
+				 function() {
+				     tradingScreen.initMarket(); 
+				 });
 };
 
 /*
@@ -36,8 +39,10 @@ TradingScreen.prototype.drawGrid = function() {
 	tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillRow);
 
 	var symbol = tradingScreen.exchange.getSymbol(productId);
-	tradingScreen.symbolDropdown.append($('<option value=' + productId + '></option>').text(symbol));
+	tradingScreen.symbolDropdown.append(
+	    $('<option value=' + productId + '></option>').text(symbol));
     });
+
     tradingScreen.wireOrderForm();
     tradingScreen.beginPolling();
 };
