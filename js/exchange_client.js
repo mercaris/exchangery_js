@@ -108,7 +108,7 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 	    callback();
 	}
     }
-    setInterval(poll, 5000);
+    setInterval(poll, 1000);
 };
 
 /*
