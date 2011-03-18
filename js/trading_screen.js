@@ -55,7 +55,7 @@ TradingScreen.prototype.drawRow = function(productId) {
 
     var $tr = $('<tr></tr>');
     var trid = 'product_row_' + productId;
-    $tr.css('id', trid);
+    $tr.attr('id', trid);
     var add_cell = function (i, name) {
 	var $td = $('<td></td>');
 	var tdid = name + '_cell_' + productId;
@@ -97,10 +97,10 @@ TradingScreen.prototype.expandRow = function (productId) {
     var tradingScreen = this;
     
     var product = tradingScreen.exchange.getProduct(productId);
-
-    tradingScreen.gridTable.find('tbody').html("");
-    
     product.sortOrders();
+
+    var $table = tradingScreen.gridTable.find('tbody');
+    $table.html("");
 
     $.each(product.orders.offers, function (rowid, offer) {
 	var $tr = $('<tr></tr>');
@@ -113,7 +113,7 @@ TradingScreen.prototype.expandRow = function (productId) {
 	    $tr.append($td);
 	};
 	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
-	tradingScreen.gridTable.append($tr);
+	$table.append($tr);
 	
 	var fill_cell = function (j, details) {
 	    var name = details[0];
@@ -121,7 +121,7 @@ TradingScreen.prototype.expandRow = function (productId) {
 	    var tdid = name + '_cell_' + rowid + '_' + productId;
 	    var $td = $('#' + tdid);
 	    $td.html(val);
-	    $td.find('a').click(function () { tradingScreen.expandRow(productId) });
+	    $td.find('a').click(function () { tradingScreen.closeRow(productId) });
 	};
 	$.each([
 	    ['product', tradingScreen.exchange.getSymbol(productId)],
@@ -145,7 +145,7 @@ TradingScreen.prototype.expandRow = function (productId) {
 	    $tr.append($td);
 	};
 	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
-	tradingScreen.gridTable.append($tr);
+	$table.append($tr);
 	
 	var fill_cell = function (j, details) {
 	    var name = details[0];
@@ -153,7 +153,7 @@ TradingScreen.prototype.expandRow = function (productId) {
 	    var tdid = name + '_cell_' + rowid + '_' + productId;
 	    var $td = $('#' + tdid);
 	    $td.html(val);
-	    $td.find('a').click(function () { tradingScreen.expandRow(productId) });
+	    $td.find('a').click(function () { tradingScreen.closeRow(productId) });
 	};
 	$.each([
 	    ['product', tradingScreen.exchange.getSymbol(productId)],
@@ -163,6 +163,15 @@ TradingScreen.prototype.expandRow = function (productId) {
 	    ['offer_quantity', '']
 	], fill_cell);
     });
+}
+
+TradingScreen.prototype.closeRow = function () {
+    var tradingScreen = this;
+
+    var $table = tradingScreen.gridTable.find('tbody');
+    $table.html("");
+
+    tradingScreen.drawGrid();
 }
 
 /*
