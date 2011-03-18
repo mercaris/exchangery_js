@@ -201,6 +201,13 @@ ExchangeClient.prototype.getSymbol = function(productId) {
 };
 
 /*
+ * get the product for an id
+ */
+ExchangeClient.prototype.getProduct = function (productId) {
+    return this.products[productId] || '';
+}
+
+/*
  * get the quantity from the highest priced buy order for the given product
  */
 ExchangeClient.prototype.getBestBidQuantity = function(productId) {

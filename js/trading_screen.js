@@ -75,10 +75,11 @@ TradingScreen.prototype.fillRow = function(productId) {
 
     var fill_cell = function (i, details) {
 	var name = details[0];
-	var val = details[1];
+	var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
 	var tdid = name + '_cell_' + productId;
 	var $td = $('#' + tdid);
 	$td.html(val);
+	$td.find('a').click(function () { tradingScreen.expandRow(productId) });
     };
     $.each([
 	['product', tradingScreen.exchange.getSymbol(productId)],
@@ -88,6 +89,81 @@ TradingScreen.prototype.fillRow = function(productId) {
 	['offer_quantity', tradingScreen.exchange.getBestOfferQuantity(productId)]
     ], fill_cell);
 };
+
+/*
+ * expand a product row to display more bids
+ */
+TradingScreen.prototype.expandRow = function (productId) {
+    var tradingScreen = this;
+    
+    var product = tradingScreen.exchange.getProduct(productId);
+
+    tradingScreen.gridTable.find('tbody').html("");
+    
+    product.sortOrders();
+
+    $.each(product.orders.offers, function (rowid, offer) {
+	var $tr = $('<tr></tr>');
+	var trid = 'expanded_row_' + productId;
+	$tr.css('id', trid);
+	var add_cell = function (j, name) {
+	    var $td = $('<td></td>');
+	    var tdid = name + '_cell_' + rowid + '_' + productId;
+	    $td.attr('id', tdid);
+	    $tr.append($td);
+	};
+	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
+	tradingScreen.gridTable.append($tr);
+	
+	var fill_cell = function (j, details) {
+	    var name = details[0];
+	    var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
+	    var tdid = name + '_cell_' + rowid + '_' + productId;
+	    var $td = $('#' + tdid);
+	    $td.html(val);
+	    $td.find('a').click(function () { tradingScreen.expandRow(productId) });
+	};
+	$.each([
+	    ['product', tradingScreen.exchange.getSymbol(productId)],
+	    ['bid_quantity', ''],
+	    ['bid', ''],
+	    ['offer', offer.price],
+	    ['offer_quantity', offer.quantity]
+	], fill_cell);
+    });
+
+    $.each(product.orders.bids, function (rowid, bid) {
+	rowid += product.orders.offers.length;
+
+	var $tr = $('<tr></tr>');
+	var trid = 'expanded_row_' + productId;
+	$tr.css('id', trid);
+	var add_cell = function (j, name) {
+	    var $td = $('<td></td>');
+	    var tdid = name + '_cell_' + rowid + '_' + productId;
+	    $td.attr('id', tdid);
+	    $tr.append($td);
+	};
+	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
+	tradingScreen.gridTable.append($tr);
+	
+	var fill_cell = function (j, details) {
+	    var name = details[0];
+	    var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
+	    var tdid = name + '_cell_' + rowid + '_' + productId;
+	    var $td = $('#' + tdid);
+	    $td.html(val);
+	    $td.find('a').click(function () { tradingScreen.expandRow(productId) });
+	};
+	$.each([
+	    ['product', tradingScreen.exchange.getSymbol(productId)],
+	    ['bid_quantity', bid.quantity],
+	    ['bid', bid.price],
+	    ['offer', ''],
+	    ['offer_quantity', '']
+	], fill_cell);
+    });
+}
 
 /*
  * Poll the market for updates
