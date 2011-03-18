@@ -33,10 +33,22 @@ http.createServer(function (req, res) {
 	    if (query.search){
 		pathquery += query.search;
 	    }
-	    //'theexchangery.com'
+
 	    var cookie = { cookie : req.headers.cookie };
-	    var options = {host: '127.0.0.1', port: 8000, method: req.method, path: pathquery, headers: cookie};
-	    //var options = {host: 'theexchangery.com', port: 80, method: req.method, path: pathquery, headers: cookie};
+	    var options = {host: '127.0.0.1', 
+			   port: 8000, 
+			   method: req.method, 
+			   path: pathquery, 
+			   headers: {cookie: req.headers.cookie,
+				     'Content-Length': body.length}
+			  };
+	    
+	    //options.host = '127.0.0.1';
+	    //options.port = 8000;
+
+	    options.host = 'theexchangery.com';
+	    options.port = 80;
+
 	    console.log('making request: ' + JSON.stringify(options));
 	    var request = http.request(options, 
 				       function (res) {
@@ -50,8 +62,8 @@ http.createServer(function (req, res) {
 					       respond(raw, response_header);
 					   });
 				       });
-	    var request_body = JSON.stringify(body);
-	    console.log('request body: ' + body+"\n");
+
+	    console.log('request body: '+body.length+' ' + body+"\n");
 	    request.write(body);
 	    request.end();
 	});
