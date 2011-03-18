@@ -36,6 +36,7 @@ TradingScreen.prototype.drawGrid = function() {
 
     $.each(tradingScreen.exchange.getProductIds(), function(i, productId) {
 	tradingScreen.drawRow(productId);
+	tradingScreen.fillRow(productId);
 	tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillRow);
 
 	var symbol = tradingScreen.exchange.getSymbol(productId);
@@ -50,44 +51,47 @@ TradingScreen.prototype.drawGrid = function() {
 /*
  * draw a row for each product, with empty cells
  */
-TradingScreen.prototype.drawRow = function(productId) {
+TradingScreen.prototype.drawRow = function(itemId) {
     var tradingScreen = this;
 
     var $tr = $('<tr></tr>');
-    var trid = 'product_row_' + productId;
+    var trid = 'product_row_' + itemId;
     $tr.attr('id', trid);
     var add_cell = function (i, name) {
 	var $td = $('<td></td>');
-	var tdid = name + '_cell_' + productId;
+	var tdid = name + '_cell_' + itemId;
 	$td.attr('id', tdid);
 	$tr.append($td);
     };
     $.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
     tradingScreen.gridTable.append($tr);
-    tradingScreen.fillRow(productId);
 };
 
 /*
  * fill in the cells for a product
  */
-TradingScreen.prototype.fillRow = function(productId) {
+TradingScreen.prototype.fillRow = function(itemId, data, expanded) {
     var tradingScreen = this;
 
-    var fill_cell = function (i, details) {
-	var name = details[0];
-	var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
-	var tdid = name + '_cell_' + productId;
+    var fill_cell = function (name, value) {
+	var value = (name == 'product') ? '<a href="#">'+value+'</a>' : value;
+	var tdid = name + '_cell_' + itemId;
 	var $td = $('#' + tdid);
-	$td.html(val);
-	$td.find('a').click(function () { tradingScreen.expandRow(productId) });
+	$td.html(value);
+	if (!expanded) {
+	    $td.find('a').click(function () { tradingScreen.expandRow(itemId) });
+	}else{
+	    $td.find('a').click(function () { tradingScreen.closeRow(expanded) });
+	}
     };
-    $.each([
-	['product', tradingScreen.exchange.getSymbol(productId)],
-	['bid_quantity', tradingScreen.exchange.getBestBidQuantity(productId)],
-	['bid', tradingScreen.exchange.getBestBidPrice(productId)],
-	['offer', tradingScreen.exchange.getBestOfferPrice(productId)],
-	['offer_quantity', tradingScreen.exchange.getBestOfferQuantity(productId)]
-    ], fill_cell);
+
+    data = data || {product: tradingScreen.exchange.getSymbol(itemId),
+		    bid_quantity: tradingScreen.exchange.getBestBidQuantity(itemId),
+		    bid: tradingScreen.exchange.getBestBidPrice(itemId),
+		    offer: tradingScreen.exchange.getBestOfferPrice(itemId),
+		    offer_quantity: tradingScreen.exchange.getBestOfferQuantity(itemId)};
+
+    $.each(data, fill_cell);
 };
 
 /*
@@ -99,79 +103,46 @@ TradingScreen.prototype.expandRow = function (productId) {
     var product = tradingScreen.exchange.getProduct(productId);
     product.sortOrders();
 
+    tradingScreen.resetGrid();
+
     var $table = tradingScreen.gridTable.find('tbody');
-    $table.html("");
 
     $.each(product.orders.offers, function (rowid, offer) {
-	var $tr = $('<tr></tr>');
-	var trid = 'expanded_row_' + productId;
-	$tr.css('id', trid);
-	var add_cell = function (j, name) {
-	    var $td = $('<td></td>');
-	    var tdid = name + '_cell_' + rowid + '_' + productId;
-	    $td.attr('id', tdid);
-	    $tr.append($td);
-	};
-	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
-	$table.append($tr);
-	
-	var fill_cell = function (j, details) {
-	    var name = details[0];
-	    var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
-	    var tdid = name + '_cell_' + rowid + '_' + productId;
-	    var $td = $('#' + tdid);
-	    $td.html(val);
-	    $td.find('a').click(function () { tradingScreen.closeRow(productId) });
-	};
-	$.each([
-	    ['product', tradingScreen.exchange.getSymbol(productId)],
-	    ['bid_quantity', ''],
-	    ['bid', ''],
-	    ['offer', offer.price],
-	    ['offer_quantity', offer.quantity]
-	], fill_cell);
+	tradingScreen.drawRow(rowid+"_"+productId);
+	tradingScreen.fillRow(rowid+"_"+productId,
+			      {product: tradingScreen.exchange.getSymbol(productId),
+			       bid_quantity: '',
+			       bid: '',
+			       offer: offer.price,
+			       offer_quantity: offer.quantity},
+			     productId);
     });
 
     $.each(product.orders.bids, function (rowid, bid) {
 	rowid += product.orders.offers.length;
 
-	var $tr = $('<tr></tr>');
-	var trid = 'expanded_row_' + productId;
-	$tr.css('id', trid);
-	var add_cell = function (j, name) {
-	    var $td = $('<td></td>');
-	    var tdid = name + '_cell_' + rowid + '_' + productId;
-	    $td.attr('id', tdid);
-	    $tr.append($td);
-	};
-	$.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
-	$table.append($tr);
-	
-	var fill_cell = function (j, details) {
-	    var name = details[0];
-	    var val = (name == 'product') ? '<a href="#">'+details[1]+'</a>' : details[1];
-	    var tdid = name + '_cell_' + rowid + '_' + productId;
-	    var $td = $('#' + tdid);
-	    $td.html(val);
-	    $td.find('a').click(function () { tradingScreen.closeRow(productId) });
-	};
-	$.each([
-	    ['product', tradingScreen.exchange.getSymbol(productId)],
-	    ['bid_quantity', bid.quantity],
-	    ['bid', bid.price],
-	    ['offer', ''],
-	    ['offer_quantity', '']
-	], fill_cell);
+	tradingScreen.drawRow(rowid+"_"+productId);
+	tradingScreen.fillRow(rowid+"_"+productId,
+			      {product: tradingScreen.exchange.getSymbol(productId),
+			       bid_quantity: bid.quantity,
+			       bid: bid.price,
+			       offer: '',
+			       offer_quantity: ''},
+			     productId);
     });
 }
 
 TradingScreen.prototype.closeRow = function () {
     var tradingScreen = this;
 
-    var $table = tradingScreen.gridTable.find('tbody');
-    $table.html("");
-
+    tradingScreen.resetGrid();
     tradingScreen.drawGrid();
+}
+
+TradingScreen.prototype.resetGrid = function () {
+    var tradingScreen = this;
+
+    tradingScreen.gridTable.find('tbody').html("");
 }
 
 /*
