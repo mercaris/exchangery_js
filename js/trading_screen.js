@@ -37,6 +37,7 @@ TradingScreen.prototype.drawGrid = function() {
     $.each(tradingScreen.exchange.getProductIds(), function(i, productId) {
 	tradingScreen.drawRow(productId);
 	tradingScreen.fillRow(productId);
+
 	tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillRow);
 
 	var symbol = tradingScreen.exchange.getSymbol(productId);
