@@ -149,6 +149,12 @@ a:hover {
 a.active {
     border-bottom:1px solid #607890;
 }
+.pseudo_link {
+    color:#607890;
+}
+.pseudo_link:hover {
+    color:#036;
+}
 nav > ul > li > a {
     color:#fff;
     text-decoration:none;

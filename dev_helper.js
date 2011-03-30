@@ -46,8 +46,8 @@ http.createServer(function (req, res) {
 	    //options.host = '127.0.0.1';
 	    //options.port = 8000;
 
-	    options.host = 'theexchangery.com';
-	    options.port = 80;
+	    //options.host = 'theexchangery.com';
+	    //options.port = 80;
 
 	    console.log('making request: ' + JSON.stringify(options));
 	    var request = http.request(options, 

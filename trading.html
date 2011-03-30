@@ -50,42 +50,56 @@
 
     <div id="body">
         <div class="inner">
+	  
+	  <div class="column six" style="vertical-align: top;">
+	  
+		<table id="order_grid"> 
+		  <thead> 
+		    <tr> 
+		      <td width="20%">product</td> 
+		      <td width="20%">bid quantity</td> 
+		      <td width="20%">bid</td> 
+		      <td width="20%">offer</td> 
+		      <td width="20%">offer quantity</td> 
+		    </tr> 
+		  </thead> 
+		  <tbody> 
+		  </tbody> 
+		</table> 
+	      
+	  </div>
 
-	  <table id="order_grid"> 
-	    <thead> 
-	      <tr> 
-		<td width="20%">product</td> 
-		<td width="20%">bid quantity</td> 
-		<td width="20%">bid</td> 
-		<td width="20%">offer</td> 
-		<td width="20%">offer quantity</td> 
-	      </tr> 
-	    </thead> 
-	    <tbody> 
-	    </tbody> 
-	  </table> 
+	  <div class="column six last">
+	      	
+		<div id="detail_pane" class="box" style="vertical-align: top; padding: 20px;"></div>
 
-            <form id="order_form">
-                <label>Symbol:</label>
-                <select type="text" id="symbol" name="symbol"></select>
+	  </div>
 
-                <label>Side:</label>
-                <select id="side" name="side">
-                    <option value="buy">buy</option>
-                    <option value="sell">sell</option>
-                </select>
+	  <div class="column twelve" style="margin-top: 40px;">
 
-                <label>Quantity:</label>
-                <input type="text" id="quantity" name="quantity" min="1">
+	    <form id="order_form">
+              <label>Symbol:</label>
+              <select type="text" id="symbol" name="symbol"></select>
+	      
+              <label>Side:</label>
+              <select id="side" name="side">
+		<option value="buy">buy</option>
+		<option value="sell">sell</option>
+              </select>
+	      
+              <label>Quantity:</label>
+              <input type="text" id="quantity" name="quantity" min="1">
+	      
+              <label>Price:</label>
+              <input type="text" id="price" name="price" min="0">
+	      
+              <input type="submit" value="Place Order" class="button">
+	      <img src="images/loading.gif" class="loader" />
+	    </form>
 
-                <label>Price:</label>
-                <input type="text" id="price" name="price" min="0">
+	  </div>
 
-                <input type="submit" value="Place Order" class="button">
-		<img src="images/loading.gif" class="loader" />
-            </form>
-	    
-        </div>
+	</div>
     </div>
 
     <div id="signup" class="focus">
@@ -105,6 +119,8 @@
         </div>
     </div>
 
+    
+
     <footer>
         <div class="inner">
 
@@ -123,10 +139,23 @@
       
       $(document).ready(function() {
         
-        var ts = new TradingScreen("order_grid", "order_form");
+        var ts = new TradingScreen("order_grid", "order_form", "detail_pane", "detail_grid");
         ts.connect("123", "demo1", "demo1");
 
       });
+
+    </script>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22166769-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
 
     </script>
 </body>
