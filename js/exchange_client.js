@@ -7,6 +7,7 @@ function ExchangeClient(marketId) {
     this.fetching = false;
     this.authenticated = false;
     this.bestOrderUpdateListeners = [];
+    this.productUpdateListeners = [];
 }
 
 /*
@@ -90,14 +91,19 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		dataType: 'json',
 		success: function(data) {
 		    $.each(data.market_update.orders, function (i, order) {
-			exchange.products[order.product_id].addOrder(order);
+			exchange.products[order.product_id].addOrReplaceOrder(order);
+			exchange.notifyProductUpdateListeners(order.product_id);
 		    });
+		    /*
 		    $.each(data.market_update.updated_orders, function (i, order) {
-			exchange.products[order.product_id].replaceOrder(order);
+			exchange.products[order.product_id].addOrReplaceOrder(order);
+			exchange.notifyProductUpdateListeners(order.product_id);
 		    });
 		    $.each(data.market_update.fills, function (i, fill) {
 			exchange.products[fill.product_id].removeOrder(fill);
+			exchange.notifyProductUpdateListeners(fill.product_id);
 		    });
+		    */
 		    exchange.fetching = false;
 		},
 		error: function (error) {
@@ -108,7 +114,7 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 	    callback();
 	}
     }
-    setInterval(poll, 1000);
+    setInterval(poll, 5000);
 };
 
 /*
@@ -130,6 +136,29 @@ ExchangeClient.prototype.notifyBestOrderListeners = function(productId) {
 	callback.call(that, productId);
     });
 };
+
+
+/*
+ * Get notified when a new order is received. callback method should take a productId as a parameter.
+ */
+ExchangeClient.prototype.registerProductUpdateListener = function(that, callback) {
+    var exchange = this;
+
+    exchange.productUpdateListeners.push([that, callback]);
+};
+
+/*
+ * Notification when a new order is received. 
+ */
+ExchangeClient.prototype.notifyProductUpdateListeners = function(productId) {
+    var exchange = this;
+    $.each(exchange.productUpdateListeners, function(i, args) {
+	var that = args[0];
+	var callback = args[1];
+	callback.call(that, productId);
+    });
+};
+
 
 /*
  * Place an order
@@ -280,7 +309,7 @@ ExchangeClient.prototype.getBestOfferQuantity = function(productId) {
 
 /*
  * Add an order to a product.
- */
+
 ExchangeClient.Product.prototype.addOrder = function(order) {
     var product = this;
     var orders = product['orders'];
@@ -292,11 +321,12 @@ ExchangeClient.Product.prototype.addOrder = function(order) {
 	product.exchange.notifyBestOrderListeners(product.id);
     }
 };
+ */
 
 /*
  * Replace an order that has been updated.
  */
-ExchangeClient.Product.prototype.replaceOrder = function(order) {
+ExchangeClient.Product.prototype.addOrReplaceOrder = function(order) {
     var product = this;
     var orders = product['orders'];
     var orderList = orders[order['side'] == 'buy' ? 'bids' : 'offers'];
@@ -310,6 +340,10 @@ ExchangeClient.Product.prototype.replaceOrder = function(order) {
     });
     if (index >= 0){
 	orderList.splice(index,1,order);
+    }
+    else {
+	orderList.push(order);
+	product.sortOrders();
     }
     if (bestOrder) {
 	product.exchange.notifyBestOrderListeners(product.id);
@@ -394,5 +428,5 @@ function isBestOrder(order, orderList) {
 }
 
 function displayQuantity(order) {
-    return order.quantity - order.filled_quantity;
+    return order.quantity;
 }

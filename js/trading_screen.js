@@ -6,6 +6,7 @@ function TradingScreen(gridId, orderFormId, detailPaneId) {
     this.orderForm = $('#' + orderFormId);
     this.detailPane = $('#' + detailPaneId);
     this.detailGrid;
+    this.detailProduct; // string, not jquery object
     this.detailSymbol;
     this.symbolDropdown = $('#' + orderFormId + ' [name=symbol]');
     this.exchange = null;
@@ -38,13 +39,13 @@ TradingScreen.prototype.drawOrderGrid = function() {
 	tradingScreen.drawSummaryRow(productId);
 	tradingScreen.fillSummaryRow(productId);
 
-	tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillSummaryRow);
-
 	var symbol = tradingScreen.exchange.getSymbol(productId);
 	tradingScreen.symbolDropdown.append(
 	    $('<option value=' + productId + '></option>').text(symbol));
     });
 
+    tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillSummaryRow);
+    tradingScreen.exchange.registerProductUpdateListener(tradingScreen, tradingScreen.notifyOfProductUpdate);
     tradingScreen.wireOrderForm();
     tradingScreen.beginPolling();
 };
@@ -123,11 +124,22 @@ TradingScreen.prototype.drawDetailPaneSkeleton = function() {
 /*
  * show a table with expand order rows to display more bids
  */
+TradingScreen.prototype.notifyOfProductUpdate = function (productId) {
+    var tradingScreen = this;
+
+    if (tradingScreen.detailProduct == productId) {
+	tradingScreen.showDetail(productId);
+    }
+};
+
+/*
+ * show a table with expand order rows to display more bids
+ */
 TradingScreen.prototype.showDetail = function (productId) {
     var tradingScreen = this;
     
     var product = tradingScreen.exchange.getProduct(productId);
-    //product.sortOrders();
+    tradingScreen.detailProduct = productId;
 
     tradingScreen.resetDetailPane();
     tradingScreen.drawDetailPaneSkeleton();
@@ -143,7 +155,7 @@ TradingScreen.prototype.showDetail = function (productId) {
 			       bid_quantity: '',
 			       bid: '',
 			       offer: offer.price,
-			       offer_quantity: offer.quantity},
+			       offer_quantity: displayQuantity(offer)},
 			     productId);
     });
 
@@ -153,7 +165,7 @@ TradingScreen.prototype.showDetail = function (productId) {
 	tradingScreen.drawDetailRow(rowid+"_"+productId);
 	tradingScreen.fillDetailRow(rowid+"_"+productId,
 			      {product: tradingScreen.exchange.getSymbol(productId),
-			       bid_quantity: bid.quantity,
+			       bid_quantity: displayQuantity(bid),
 			       bid: bid.price,
 			       offer: '',
 			       offer_quantity: ''},
@@ -198,13 +210,13 @@ TradingScreen.prototype.fillDetailRow = function(itemId, data) {
 	var $td = $('#' + tdid);
 	$td.html(value);	
     };
-
+/*
     data = data || {product: tradingScreen.exchange.getSymbol(itemId),
 		    bid_quantity: tradingScreen.exchange.getBestBidQuantity(itemId),
 		    bid: tradingScreen.exchange.getBestBidPrice(itemId),
 		    offer: tradingScreen.exchange.getBestOfferPrice(itemId),
 		    offer_quantity: tradingScreen.exchange.getBestOfferQuantity(itemId)};
-
+*/
     $.each(data, fill_cell);
 };
 
