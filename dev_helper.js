@@ -20,8 +20,8 @@ http.createServer(function (req, res) {
     }
 
     var query = urllib.parse(req.url);
-    var remote_path = '/ts/';
-    var remote = query.pathname.substr(0, remote_path.length) === remote_path
+    //var remote_path = '/ts/';
+    var remote = query.pathname.indexOf(".") == -1; //  query.pathname.substr(0, remote_path.length) === remote_path
 
     if (remote) {
 	var body = '';

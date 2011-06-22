@@ -1,5 +1,6 @@
 $('#newsletter').submit(function() {
-    requestData = { email: $('[name=email]').val() };			
+    requestData = { email: $('[name=email]').val() };	
+    $(this).addClass("loading");
     $.ajax({
 	type: 'POST',
 	url: 'list/subscribe', 
@@ -8,8 +9,10 @@ $('#newsletter').submit(function() {
 	processData : false,
 	data: JSON.stringify(requestData),
 	success: function(data) {
-	    console.log(data);
+	    alert("Thank you!");
 	}
     });
+    $(this).removeClass("loading");
+    $('[name=email]').val("");
     return false;
 });

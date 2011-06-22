@@ -14,6 +14,7 @@
     <meta name="author" content="Adrian Unger">
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
 
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -44,20 +45,21 @@
         <div class="inner">
 
             <h2>Account Demo</h2>
-
-        </div>
-    </div>
-
-    <div id="body">
-        <div class="inner">
- 
-            <table border="1" width="100%">
+	    <table border="1" width="100%">
                 <tr>
                     <th id="products_select">1. Products</th>
                     <th id="accounts_select">2. Accounts</th>
                     <th id="risk_select">3. Risk</th>
                     <th id="trading_select">4. Trading Screen</th>
                 </tr>
+	    </table>
+        </div>
+    </div>
+
+    <div id="body">
+        <div class="inner">
+ 
+            <table width="100%">
                 <tr>
                     <td colspan="4">
 
@@ -246,23 +248,22 @@
         </div>
     </footer>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script>!window.jQuery && document.write('<script src="js/jquery.js"><\/script>')</script>
-<script type="text/javascript" src="js/plugins.js"></script>
-<script type="text/javascript" src="js/account_screen.js"></script>
-<script type="text/javascript" src="js/newsletter.js"></script>
-<script type="text/javascript">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/account_screen.js"></script>
+    <script type="text/javascript" src="js/newsletter.js"></script>
+    <script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-22166769-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22166769-1']);
+      _gaq.push(['_trackPageview']);
+      
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+      
+    </script>
 </body>
 </html>

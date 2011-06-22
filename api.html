@@ -31,6 +31,7 @@
                 <ul>
                     <li><a href="index.html" title="Home">Home</a></li>
                     <li><a href="faq.html" title="Frequently Asked Questions">FAQ</a></li>
+		    <li><a href="about.html" title="About">About</a></li>
 		    <li><a href="api.html" title="API" class="active">APIs</a></li>
                     <li><a href="trading.html" title="Trading Demo">Trading Demo</a></li>
                     <!-- <li><a href="account.html" title="Account Demo">Account Demo</a></li>  class="button darker" -->
@@ -73,9 +74,9 @@
                     <p>Before any data can be retrieved from the api, a login must be made. A login is per client, and subsequent calls to the api will only return information pertinent to that particular client. In order to achieve this, a session-id cookie is returned with the login response. It must be returned in the request header of all subsequent requests. In the future there may be an optional request parameter version of this for non browser clients.</p>
                     <h4>Request</h4>
                     <code>
-                    <strong>method:</strong> POST 
-                    <strong>url:</strong> /ts/login 
-                    <strong>body:</strong> {"username":"[username]", "password":"[p455w0rd]", "market_id":"[id]"} 
+                    <strong>method:</strong> POST <br/>
+                    <strong>url:</strong> /ts/login <br/>
+                    <strong>body:</strong> {"username":"[username]", "password":"[p455w0rd]", "market_id":"[id]"} <br/>
                     </code>
                     <h4>Response</h4>
                     <code>{"result":"success"}</code>

@@ -5,9 +5,11 @@ function ExchangeClient(marketId) {
     this.marketId = marketId;
     this.products = {};
     this.fetching = false;
+    this.connected = false;
     this.authenticated = false;
     this.bestOrderUpdateListeners = [];
     this.productUpdateListeners = [];
+    this.pollTime = 1000; //ms
 }
 
 /*
@@ -24,6 +26,7 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
 	success: function(data) {	    
 	    exchange.authenticated = true;
+	    exchange.connected = true;
 	    callback();
 	}
     });
@@ -39,7 +42,8 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
     }
     exchange.fetching = true;
     
-    $.get('ts/market_snapshot', {
+    //$.get('ts/market_snapshot', {
+    $.get('js/test.js', {
 	'market_id': exchange.marketId
     }, function(data, textStatus) {
 	if(textStatus == 'success') {
@@ -84,37 +88,42 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
     }
 
     var poll = function () {
-	if (!exchange.fetching) {
+	
+	if (exchange.connected && !exchange.fetching) {	   
 	    exchange.fetching = true;
 	    $.ajax({
 		url: 'ts/market_update', 
 		dataType: 'json',
 		success: function(data) {
-		    $.each(data.market_update.orders, function (i, order) {
-			exchange.products[order.product_id].addOrReplaceOrder(order);
-			exchange.notifyProductUpdateListeners(order.product_id);
-		    });
-		    /*
-		    $.each(data.market_update.updated_orders, function (i, order) {
-			exchange.products[order.product_id].addOrReplaceOrder(order);
-			exchange.notifyProductUpdateListeners(order.product_id);
-		    });
-		    $.each(data.market_update.fills, function (i, fill) {
-			exchange.products[fill.product_id].removeOrder(fill);
-			exchange.notifyProductUpdateListeners(fill.product_id);
-		    });
-		    */
-		    exchange.fetching = false;
+		    try {
+			$.each(data.market_update.orders, function (i, order) {
+			    exchange.products[order.product_id].addOrReplaceOrder(order);
+			    exchange.notifyProductUpdateListeners(order.product_id);
+			});
+		    }
+		    catch(err) {
+			alert(err);
+		    }
+		    callback();
 		},
 		error: function (error) {
+		    exchange.connected = false;
+		    alert("error : " + error.statusText);
+		},
+		complete: function(data) {
 		    exchange.fetching = false;
-		    log("error polling", error.statusText);
+		    setInterval(poll, exchange.pollTime);
 		}
-	    });
-	    callback();
+	    });	    
+	}
+	else if (exchange.fetching) {
+	    setInterval(poll, exchange.pollTime);
+	}
+	else {
+	    alert("disconnecting, please refresh...");
 	}
     }
-    setInterval(poll, 5000);
+    //poll();
 };
 
 /*
@@ -307,21 +316,6 @@ ExchangeClient.prototype.getBestOfferQuantity = function(productId) {
     return '';    
 };
 
-/*
- * Add an order to a product.
-
-ExchangeClient.Product.prototype.addOrder = function(order) {
-    var product = this;
-    var orders = product['orders'];
-    var orderList = orders[order['side'] == 'buy' ? 'bids' : 'offers'];
-    var bestOrder = isBestOrder(order, orderList);
-    orderList.push(order);
-    product.sortOrders();
-    if (bestOrder) {
-	product.exchange.notifyBestOrderListeners(product.id);
-    }
-};
- */
 
 /*
  * Replace an order that has been updated.
@@ -340,8 +334,11 @@ ExchangeClient.Product.prototype.addOrReplaceOrder = function(order) {
     });
     if (index >= 0){
 	orderList.splice(index,1,order);
+	if (order.quantity == 0) {
+	    orderList.splice(index,1);   
+	}
     }
-    else {
+    else if (order.quantity > 0) {
 	orderList.push(order);
 	product.sortOrders();
     }
@@ -390,12 +387,21 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
 ExchangeClient.Product.prototype.sortOrders = function() {
     var product = this;
     var orders = product.orders;
+    console.log("sorting offers");
+    console.log(orders.offers);
     orders['offers'].sort(function(a, b) {
-	return a['price'] < b['price'];
+	
+	return a['price'] <= b['price'];
     });
+    console.log(orders.offers);
+
+    console.log("sorting bids");
+    console.log(orders.bids);
     orders['bids'].sort(function(a, b) {
-	return a['price'] < b['price'];
+	console.log(a.price + " compared to " + b.price);
+	return a['price'] <= b['price'];
     });
+    console.log(orders.bids);
 };
 
 
