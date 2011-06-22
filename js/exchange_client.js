@@ -391,15 +391,15 @@ ExchangeClient.Product.prototype.sortOrders = function() {
     console.log(orders.offers);
     orders['offers'].sort(function(a, b) {
 	
-	return a['price'] <= b['price'];
+	return b['price'] - a['price'];
     });
     console.log(orders.offers);
 
     console.log("sorting bids");
     console.log(orders.bids);
     orders['bids'].sort(function(a, b) {
-	console.log(a.price + " compared to " + b.price);
-	return a['price'] <= b['price'];
+	console.log(a.price + " compared to " + b.price + "res " + (a['price'] <= b['price']));
+	return b['price'] - a['price'];
     });
     console.log(orders.bids);
 };
