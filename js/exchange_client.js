@@ -41,9 +41,10 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 	return;
     }
     exchange.fetching = true;
-    
-    //$.get('ts/market_snapshot', {
-    $.get('js/test.js', {
+
+    //$.get('js/test.js', {
+
+    $.get('ts/market_snapshot', {
 	'market_id': exchange.marketId
     }, function(data, textStatus) {
 	if(textStatus == 'success') {
@@ -105,25 +106,16 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 			alert(err);
 		    }
 		    callback();
+		    exchange.fetching = false;
 		},
 		error: function (error) {
 		    exchange.connected = false;
-		    alert("error : " + error.statusText);
+		    alert("disconnecting..." + error.statusText);
 		},
-		complete: function(data) {
-		    exchange.fetching = false;
-		    setInterval(poll, exchange.pollTime);
-		}
 	    });	    
 	}
-	else if (exchange.fetching) {
-	    setInterval(poll, exchange.pollTime);
-	}
-	else {
-	    alert("disconnecting, please refresh...");
-	}
     }
-    //poll();
+    setInterval(poll, 500);
 };
 
 /*
@@ -387,21 +379,15 @@ ExchangeClient.Product.prototype.removeOrder = function (fill) {
 ExchangeClient.Product.prototype.sortOrders = function() {
     var product = this;
     var orders = product.orders;
-    console.log("sorting offers");
-    console.log(orders.offers);
-    orders['offers'].sort(function(a, b) {
-	
-	return b['price'] - a['price'];
-    });
-    console.log(orders.offers);
 
-    console.log("sorting bids");
-    console.log(orders.bids);
-    orders['bids'].sort(function(a, b) {
-	console.log(a.price + " compared to " + b.price + "res " + (a['price'] <= b['price']));
+    orders['offers'].sort(function(a, b) {
 	return b['price'] - a['price'];
     });
-    console.log(orders.bids);
+
+    orders['bids'].sort(function(a, b) {
+	return b['price'] - a['price'];
+    });
+
 };
 
 
