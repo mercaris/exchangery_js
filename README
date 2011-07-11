@@ -1,4 +1,4 @@
-This demo consists of:
+exchangery_js is a client library for connecting to the trading apis of http://theexchangery.com/api.html. This project is released under the "Simplified BSD License", which can be found in the LICENSE file. The project consists of:
 
 trading.html 
 - a live trading screen, to be used in conjunction with proxy.js to connect to exchangery.com. proxy.js is a node.js file and can be started with "node proxy.js" and then pointing your browser to http://localhost:8124/trading.html
