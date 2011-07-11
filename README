@@ -1,6 +1,10 @@
 This demo consists of:
 
-trading.html - a live trading screen
+trading.html 
+- a live trading screen, to be used in conjunction with proxy.js to connect to exchangery.com. proxy.js is a node.js file and can be started with "node proxy.js" and then pointing your browser to http://localhost:8124/trading.html
 
-js/exchange_client.js
-js/trading_screen.js
+exchange_client.js
+- connects to exchangery.com's apis, requests market snapshot and then polls for market updates. maintains an orders grid in memory.
+
+trading_screen.js
+- displays the order book in 2 windows, one with best bid/offer for each product and one for full order book depth for a single product.
