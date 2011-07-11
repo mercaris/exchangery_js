@@ -22,12 +22,21 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	url: 'ts/login', 
 	contentType: 'application/json; charset=utf-8', 
 	dataType: 'json',
-	processData : false,
+	processData: false,
+	//timeout: 1000,
 	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
-	success: function(data) {	    
-	    exchange.authenticated = true;
-	    exchange.connected = true;
-	    callback();
+	success: function(data) {
+	    if (data.result == 'error'){
+		alert(data.errors);
+	    }
+	    else {
+		exchange.authenticated = true;
+		exchange.connected = true;
+		callback();
+	    }
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+	    alert("Could not log in to the trading platform.");	    
 	}
     });
 };
