@@ -1,7 +1,6 @@
 This demo consists of:
 
-index.html - a marketing page describing what the company does
-account.html - a demo account page with some mocked up functionality
 trading.html - a live trading screen
-api.html - describes the various apis
-faq.html - an explanation of commodities trading.
+
+js/exchange_client.js
+js/trading_screen.js
