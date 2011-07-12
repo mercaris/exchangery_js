@@ -1,11 +1,7 @@
 
-/*
-
-Run this with node and it will mock responses from the live environment.
-
-Just set up something to use it as a reverse proxy on <path>/ts/
-
-*/
+/*******
+ * Run this with node and it will proxy AJAX requests to the live environment while loading files from a local directory.
+ ******/
 
 var http = require('http'),
     fs = require('fs'),
