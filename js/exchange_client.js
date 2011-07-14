@@ -25,6 +25,7 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	processData: false,
 	//timeout: 1000,
 	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
+<<<<<<< HEAD:exchange_client.js
 	success: function(data) {
 	    if (data.result == 'error'){
 		alert(data.errors);
@@ -37,6 +38,16 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
 	    alert("Could not log in to the trading platform.");	    
+=======
+	success: function(data) {	    
+		if (data['result'] == 'success') {
+			exchange.authenticated = true;
+		    exchange.connected = true;
+		    callback();
+		} else {
+			//$('#login-form .error-note').show('slow');
+		}		
+>>>>>>> 0d15c89d9ce300ad869e3ae9a93dc1383215745a:js/exchange_client.js
 	}
     });
 };
@@ -57,7 +68,7 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 	'market_id': exchange.marketId
     }, function(data, textStatus) {
 	if(textStatus == 'success') {
-	    
+  
 	    var snapshot = data['snapshot'];
 	    var market = snapshot['market'];
 	    var products = {};
@@ -390,11 +401,21 @@ ExchangeClient.Product.prototype.sortOrders = function() {
     var orders = product.orders;
 
     orders['offers'].sort(function(a, b) {
-	return b['price'] - a['price'];
+	if (a.price != b.price) {
+	    return b.price - a.price;
+	}
+	else {
+	    return b.timestamp_micros - a.timestamp_micros;
+	}
     });
 
     orders['bids'].sort(function(a, b) {
-	return b['price'] - a['price'];
+	if (a.price != b.price) {
+	    return b.price - a.price;
+	}
+	else {
+	    return a.timestamp_micros - b.timestamp_micros;
+	}
     });
 
 };

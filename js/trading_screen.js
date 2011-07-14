@@ -18,7 +18,7 @@ function TradingScreen(gridId, orderFormId, detailPaneId) {
 TradingScreen.prototype.connect = function(marketId, username, password) {
     var tradingScreen = this;
     tradingScreen.exchange = new ExchangeClient(marketId);
-    tradingScreen.exchange.login(username, password, function() { tradingScreen.initMarket(); });
+    tradingScreen.exchange.login(username, password, function() { $.fancybox.close(); tradingScreen.initMarket(); });
 };
 
 /*
