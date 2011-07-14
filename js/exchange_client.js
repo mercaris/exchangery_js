@@ -25,20 +25,6 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 	processData: false,
 	//timeout: 1000,
 	data: JSON.stringify({'username' : username, 'password' : password, 'market_id' : this.marketId}),
-<<<<<<< HEAD:exchange_client.js
-	success: function(data) {
-	    if (data.result == 'error'){
-		alert(data.errors);
-	    }
-	    else {
-		exchange.authenticated = true;
-		exchange.connected = true;
-		callback();
-	    }
-	},
-	error: function(jqXHR, textStatus, errorThrown) {
-	    alert("Could not log in to the trading platform.");	    
-=======
 	success: function(data) {	    
 		if (data['result'] == 'success') {
 			exchange.authenticated = true;
@@ -47,7 +33,6 @@ ExchangeClient.prototype.login = function(username, password, callback) {
 		} else {
 			//$('#login-form .error-note').show('slow');
 		}		
->>>>>>> 0d15c89d9ce300ad869e3ae9a93dc1383215745a:js/exchange_client.js
 	}
     });
 };
