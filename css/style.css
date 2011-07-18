@@ -469,12 +469,21 @@ div.inner:after, .clearfix:after {clear:both;content:' ';display:block;font-size
 .a-right {
 	text-align:right;
 }
+.no-display {
+	display:none;
+}
 
 #login-form {
 	padding:0px;
 	background:none;
 }
 #login-form .error-note {
+	display:none;
+	color:#FF0000;
+	font-size:14px;
+	padding: 0 0 10px 0;
+}
+#login-form .connect-note {
 	display:none;
 	color:#FF0000;
 	font-size:14px;
