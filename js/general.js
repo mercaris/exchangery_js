@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$('#menu-login').fancybox({
-		modal: false,
+		modal: true,
 		titleShow: false,
 		padding: 20
 	});
@@ -26,11 +26,14 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	$("#menu-login").click();
 });
 
 function login()
 {
 	$('#login-form .error-note').hide();
+	$('#login-form .connect-note').hide();
 
 	var ts = new TradingScreen("order_grid", "order_form", "detail_pane", "detail_grid");
 	ts.connect("123", $('#username').val(), $('#password').val());
