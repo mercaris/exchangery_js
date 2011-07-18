@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$('#menu-login').fancybox({
-		modal: false,
+		modal: true,
 		titleShow: false,
 		padding: 20
 	});
@@ -26,6 +26,8 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	$("#menu-login").click();
 });
 
 function login()
