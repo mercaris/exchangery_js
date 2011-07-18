@@ -114,7 +114,8 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		},
 		error: function (error) {
 		    exchange.connected = false;
-		    alert("disconnecting..." + error.statusText);
+		    $("#menu-login").click();
+			$('#login-form .connect-note').show();
 		},
 	    });	    
 	}

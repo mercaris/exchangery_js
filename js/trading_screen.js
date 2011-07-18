@@ -3,6 +3,7 @@
  */
 function TradingScreen(gridId, orderFormId, detailPaneId) {
     this.orderGrid = $('#' + gridId);
+	this.orderGrid.find('tbody').html('');
     this.orderForm = $('#' + orderFormId);
     this.detailPane = $('#' + detailPaneId);
     this.detailGrid;
