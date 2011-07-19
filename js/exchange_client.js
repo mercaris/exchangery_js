@@ -114,6 +114,18 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		},
 		error: function (error) {
 		    exchange.connected = false;
+			var username = 'demo';
+			var random_number = Math.floor(Math.random() * 10000);
+			if (random_number < 10)
+				username += '000' + random_number;
+			else if (random_number < 100)
+				username += '00' + random_number;
+			else if (random_number < 1000)
+				username += '0' + random_number;
+			else
+				username += random_number;
+			$('#username').val(username);
+			$('#username-random').html(username);
 		    $("#menu-login").click();
 			$('#login-form .connect-note').show();
 		},

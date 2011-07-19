@@ -52,15 +52,20 @@
 				<form id="login-form" method="post">
 					<div class="connect-note">The connection is lost. Please try to login again.</div>
 					<div class="error-note">The username or password is not correct. Please try again.</div>
-					<div class="item-title">Username:</div>
-					<input type="text" name="username" id="username">
-					<div class="clear"></div>
-					<div class="item-title">Password:</div>
-					<input type="password" name="password" id="password">
-					<div class="clear"></div>
+					<div>
+						<div class="item-title">Username:</div>
+						<!--<input type="text" name="username" id="username">-->
+						<span id="username-random"></span>
+						<input type="hidden" name="username" id="username" value="">
+						<div class="clear"></div>
+					</div>
+					<div>
+						<div class="item-title">Password:</div>
+						<input type="password" name="password" id="password">
+						<div class="clear"></div>
+					</div>
 					<div class="a-right">
 						<input type="submit" class="button" value="Login">
-						<input type="button" class="button" value="Cancel" onclick="$.fancybox.close();">
 					</div>
 				</form>
 			</div>
