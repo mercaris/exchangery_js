@@ -27,6 +27,7 @@ $(document).ready(function() {
 		}
 	});
 
+	/* Random id for dev server*/
 	var username = 'demo';
 	var random_number = Math.floor(Math.random() * 10000);
 	if (random_number < 10)
@@ -38,7 +39,9 @@ $(document).ready(function() {
 	else
 		username += random_number;
 	$('#username').val(username);
-	$('#username-random').html(username);
+	$('#password').val(username);
+	/* ----------------------------- */
+
 	$("#menu-login").click();
 });
 
