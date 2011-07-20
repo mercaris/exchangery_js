@@ -114,6 +114,8 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		},
 		error: function (error) {
 		    exchange.connected = false;
+
+			/* Random id for dev server*/
 			var username = 'demo';
 			var random_number = Math.floor(Math.random() * 10000);
 			if (random_number < 10)
@@ -125,7 +127,9 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 			else
 				username += random_number;
 			$('#username').val(username);
-			$('#username-random').html(username);
+			$('#password').val(username);
+			/* ----------------------------- */
+
 		    $("#menu-login").click();
 			$('#login-form .connect-note').show();
 		},
