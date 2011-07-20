@@ -511,3 +511,8 @@ div.inner:after, .clearfix:after {clear:both;content:' ';display:block;font-size
 #login-form .button {
 	padding:5px 20px;
 }
+#login-form #username-random {
+	font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+}
