@@ -9,6 +9,7 @@ function ExchangeClient(marketId) {
     this.authenticated = false;
     this.bestOrderUpdateListeners = [];
     this.productUpdateListeners = [];
+	this.recentTradeUpdateListeners = [];
     this.pollTime = 1000; //ms
 }
 
@@ -64,7 +65,8 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 		    'orders': {
 			'offers': [],
 			'bids': []
-		    }
+		    },
+			'trades': []
 		};
 	    });
 	    
@@ -75,7 +77,7 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 	    
 	    exchange.products = {};
 	    $.each(products, function(i, product) {
-		exchange.products[i] = new ExchangeClient.Product(exchange, product['id'], product['symbol'], product['orders']);
+		exchange.products[i] = new ExchangeClient.Product(exchange, product['id'], product['symbol'], product['orders'], product['trades']);
 	    });		
 	}
 	exchange.fetching = false;
@@ -104,6 +106,9 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 			$.each(data.market_update.orders, function (i, order) {
 			    exchange.products[order.product_id].addOrReplaceOrder(order);
 			    exchange.notifyProductUpdateListeners(order.product_id);
+			});
+			$.each(data.market_update.trades, function (i, trade) {
+			    exchange.products[trade.product_id].addOrReplaceTrade(trade);
 			});
 		    }
 		    catch(err) {
@@ -153,6 +158,26 @@ ExchangeClient.prototype.registerBestOrderUpdateListener = function(that, callba
 ExchangeClient.prototype.notifyBestOrderListeners = function(productId) {
     var exchange = this;
     $.each(exchange.bestOrderUpdateListeners, function(i, args) {
+	var that = args[0];
+	var callback = args[1];
+	callback.call(that, productId);
+    });
+};
+
+/*
+ * Get notified when a most recent trade is received. callback method should take a productId as a parameter.
+ */
+ExchangeClient.prototype.registerRecentTradeUpdateListener = function(that, callback) {
+    var exchange = this;
+    exchange.recentTradeUpdateListeners.push([that, callback]);
+};
+
+/*
+ * Notification when a most recent trade is received. 
+ */
+ExchangeClient.prototype.notifyRecentTradeListeners = function(productId) {
+    var exchange = this;
+    $.each(exchange.recentTradeUpdateListeners, function(i, args) {
 	var that = args[0];
 	var callback = args[1];
 	callback.call(that, productId);
@@ -213,7 +238,7 @@ ExchangeClient.prototype.placeOrder = function(productId, side, quantity, price,
 /*
  * Represents a product, consists of a product id, a symbol, a list of buy orders (bids) and a list of sell orders (offers)
  */
-ExchangeClient.Product = function(exchange, id, symbol, orders) {
+ExchangeClient.Product = function(exchange, id, symbol, orders, trades) {
     var product = this;
     product.exchange = exchange;
     product.id = id;
@@ -222,6 +247,7 @@ ExchangeClient.Product = function(exchange, id, symbol, orders) {
 	'offers': orders['offers'].slice(0),
 	'bids': orders['bids'].slice(0)
     };
+	product.trades = trades.slice(0);
     this.sortOrders();
 };
 
@@ -329,6 +355,22 @@ ExchangeClient.prototype.getBestOfferQuantity = function(productId) {
     return '';    
 };
 
+/*
+ * get the quantity from the lowest priced sell order for the given product
+ */
+ExchangeClient.prototype.getMostRecentTradePrice = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product) {
+	var trades = product.trades;
+		if (trades.length > 0) {
+			var price = trades[trades.length - 1].price;
+			return price;
+		}
+    }
+    return '';    
+};
+
 
 /*
  * Replace an order that has been updated.
@@ -419,6 +461,17 @@ ExchangeClient.Product.prototype.sortOrders = function() {
 	}
     });
 
+};
+
+/*
+ * Replace an trade that has been updated.
+ */
+ExchangeClient.Product.prototype.addOrReplaceTrade = function(trade) {
+    var product = this;
+    var tradeList = product['trades'];
+    tradeList.push(trade);
+
+	product.exchange.notifyRecentTradeListeners(product.id);
 };
 
 

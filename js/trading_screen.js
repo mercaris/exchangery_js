@@ -47,6 +47,7 @@ TradingScreen.prototype.drawOrderGrid = function() {
 
     tradingScreen.exchange.registerBestOrderUpdateListener(tradingScreen, tradingScreen.fillSummaryRow);
     tradingScreen.exchange.registerProductUpdateListener(tradingScreen, tradingScreen.notifyOfProductUpdate);
+	tradingScreen.exchange.registerRecentTradeUpdateListener(tradingScreen, tradingScreen.fillSummaryRow);
     tradingScreen.wireOrderForm();
     tradingScreen.beginPolling();
 };
@@ -66,9 +67,10 @@ TradingScreen.prototype.drawSummaryRow = function(itemId) {
 	$td.attr('id', tdid);
 	$tr.append($td);
     };
-    $.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity'], add_cell);
+    $.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity', 'last_price'], add_cell);
     tradingScreen.orderGrid.append($tr);
 };
+
 
 /*
  * fill in the cells for a product
@@ -90,7 +92,8 @@ TradingScreen.prototype.fillSummaryRow = function(itemId, data) {
 		    bid_quantity: tradingScreen.exchange.getBestBidQuantity(itemId),
 		    bid: tradingScreen.exchange.getBestBidPrice(itemId),
 		    offer: tradingScreen.exchange.getBestOfferPrice(itemId),
-		    offer_quantity: tradingScreen.exchange.getBestOfferQuantity(itemId)};
+		    offer_quantity: tradingScreen.exchange.getBestOfferQuantity(itemId),
+			last_price: tradingScreen.exchange.getMostRecentTradePrice(itemId)};
 
     $.each(data, fill_cell);
 };
