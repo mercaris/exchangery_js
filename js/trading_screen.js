@@ -67,7 +67,7 @@ TradingScreen.prototype.drawSummaryRow = function(itemId) {
 	$td.attr('id', tdid);
 	$tr.append($td);
     };
-    $.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity', 'last_price'], add_cell);
+    $.each(['product', 'bid_quantity', 'bid', 'offer', 'offer_quantity', 'last_price', 'last_price_arrow'], add_cell);
     tradingScreen.orderGrid.append($tr);
 };
 
@@ -85,6 +85,9 @@ TradingScreen.prototype.fillSummaryRow = function(itemId, data) {
 	$td.html(value);
 
 	$td.find('.show_detail').click(function () { tradingScreen.showDetail(itemId) });
+	if (name == 'last_price_arrow') {
+		$('#' + name + '_cell_' + itemId + ' img').show().delay(1500).fadeOut();
+	}
 	
     };
 
@@ -93,7 +96,8 @@ TradingScreen.prototype.fillSummaryRow = function(itemId, data) {
 		    bid: tradingScreen.exchange.getBestBidPrice(itemId),
 		    offer: tradingScreen.exchange.getBestOfferPrice(itemId),
 		    offer_quantity: tradingScreen.exchange.getBestOfferQuantity(itemId),
-			last_price: tradingScreen.exchange.getMostRecentTradePrice(itemId)};
+			last_price: tradingScreen.exchange.getMostRecentTradePrice(itemId),
+			last_price_arrow: tradingScreen.exchange.getMostRecentTradePriceArrow(itemId)};
 
     $.each(data, fill_cell);
 };
