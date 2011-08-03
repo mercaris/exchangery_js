@@ -372,6 +372,25 @@ ExchangeClient.prototype.getMostRecentTradePrice = function(productId) {
     return '';    
 };
 
+/*
+ * get the quantity from the lowest priced sell order for the given product
+ */
+ExchangeClient.prototype.getMostRecentTradePriceArrow = function(productId) {
+    var exchange = this;
+    var product = exchange.products[productId];
+    if (product) {
+	var trades = product.trades;
+		if (trades.length > 1) {
+			if (trades[trades.length - 1].price > trades[trades.length - 2].price) {
+				return '<img src="images/arrow-up.png" style="margin-top:5px;">';
+			} else if (trades[trades.length - 1].price < trades[trades.length - 2].price) {
+				return '<img src="images/arrow-down.png" style="margin-top:5px;">';
+			}			
+		}
+    }
+    return '';    
+};
+
 
 /*
  * Replace an order that has been updated.
