@@ -70,6 +70,7 @@ ExchangeClient.prototype.marketSnapshot = function(callback) {
 			'trades': []
 		};
 	    });
+
 	    
 	    $.each(snapshot['orders'], function(i, order) {
 		var order_list = order['side'] == 'buy' ? 'bids' : 'offers';
@@ -493,7 +494,6 @@ ExchangeClient.Product.prototype.addOrReplaceTrade = function(trade) {
 
 	product.exchange.notifyRecentTradeListeners(product.id);
 };
-
 
 
 /*
