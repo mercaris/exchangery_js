@@ -43,6 +43,10 @@ $(document).ready(function() {
 	/* ----------------------------- */
 
 	$("#menu-login").click();
+
+	$('#order_form input[name=price]').keydown(function(){
+		$(this).css('color', '#000000');
+	});
 });
 
 function login()
