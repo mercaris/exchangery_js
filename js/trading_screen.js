@@ -271,19 +271,23 @@ TradingScreen.prototype.wireOrderForm = function() {
 TradingScreen.prototype.placeOrder = function() {
     var tradingScreen = this;
 
-    tradingScreen.orderForm.addClass("loading");
-
     var productId = tradingScreen.orderForm.find('select[name=symbol] option:selected').val();
     var side = tradingScreen.orderForm.find('select[name=side] option:selected').val();
     var quantity = tradingScreen.orderForm.find('input[name=quantity]').val();
     var price = tradingScreen.orderForm.find('input[name=price]').val();
 
-    tradingScreen.exchange.placeOrder(productId, side, quantity, price, function(result, messages) {
-	tradingScreen.orderForm.find("input[type=text]").val("");
-	tradingScreen.orderForm.removeClass("loading");
-	if (result == "error") {
-	    
+	if (price <= 0 || price * 1000 % 10 != 0)
+	{
+		tradingScreen.orderForm.find('input[name=price]').css('color', '#FF0000');
+		return false;
 	}
+
+	tradingScreen.orderForm.addClass("loading");
+    tradingScreen.exchange.placeOrder(productId, side, quantity, price, function(result, messages) {
+		tradingScreen.orderForm.find("input[type=text]").val("");
+		tradingScreen.orderForm.removeClass("loading");
+		if (result == "error") {  
+		}
     });
 };
     
