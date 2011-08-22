@@ -11,6 +11,7 @@ function TradingScreen(gridId, orderFormId, detailPaneId) {
     this.detailSymbol;
     this.symbolDropdown = $('#' + orderFormId + ' [name=symbol]');
     this.exchange = null;
+	this.chartModel = new ChartModel(0);
 	this.mode = 'test';
 };
 
@@ -30,6 +31,7 @@ TradingScreen.prototype.initMarket = function () {
     var tradingScreen = this;
     tradingScreen.exchange.marketSnapshot(function() { 
 		tradingScreen.drawOrderGrid();
+		setInterval(function() { tradingScreen.repaintChart(); }, 100);
 	});
 };
 
@@ -91,7 +93,12 @@ TradingScreen.prototype.fillSummaryRow = function(itemId, data) {
 	var $td = $('#' + tdid);
 	$td.html(value);
 
-	$td.find('.show_detail').click(function () { tradingScreen.showDetail(itemId) });
+	$td.find('.show_detail').click(function() { 
+		tradingScreen.showDetail(itemId); 
+		delete tradingScreen.chartModel;  
+		tradingScreen.chartModel = new ChartModel(itemId);
+		tradingScreen.chartModel.add(tradingScreen.exchange.getMostRecentTradePrice(itemId), itemId);
+	});
 	if (name == 'last_price_arrow') {
 		$('#' + name + '_cell_' + itemId + ' img').show().delay(1500).fadeOut();
 	}
@@ -107,6 +114,8 @@ TradingScreen.prototype.fillSummaryRow = function(itemId, data) {
 			last_price_arrow: tradingScreen.exchange.getMostRecentTradePriceArrow(itemId)};
 
     $.each(data, fill_cell);
+
+	tradingScreen.chartModel.add(tradingScreen.exchange.getMostRecentTradePrice(itemId), itemId);
 };
 
 /*
@@ -329,10 +338,49 @@ TradingScreen.prototype.generateRandomOrders = function() {
 
 			//alert(side + '---'  + Math.floor(qty * percentQty) + '---'  + Math.floor(price * percentPrice));
 
-			tradingScreen.exchange.placeOrder(randProd.id, side, Math.floor(qty * percentQty), Math.floor(price * percentPrice), function(){});
+			tradingScreen.exchange.placeOrder(randProd.id, side, Math.floor(qty * percentQty), Math.floor(price * percentPrice) + 3, function(){});
 		}
     }
 
     setInterval(gen_order, 1000);
     
 };
+
+/*
+ * Get chart container
+ */
+TradingScreen.prototype.getChartDiv = function() {
+    return document.getElementById("chart");    
+};
+
+/*
+ * Repaint the chart
+ */
+TradingScreen.prototype.repaintChart = function() {
+
+	var tradingScreen = this;
+	var divTag = document.createElement("div");
+	var axisY = AXIS_Y_WIDTH;
+
+	if (chart)
+	{
+		axisY = chart._axisY;
+		chart.dispose();
+		delete chart;
+	}
+	axisY--;
+	chart = new ChartWidget(divTag, 269, 240, axisY);
+
+	//chart.data("Live bid price", sellHistory, SELL_COLOR);
+	//chart.data("Live ask price", buyHistory, BUY_COLOR);
+
+	tradingScreen.getChartDiv().replaceChild(divTag, tradingScreen.getChartDiv().firstChild);
+
+	if (tradingScreen.detailProduct)
+	{
+		tradingScreen.chartModel.update();
+	}
+
+	chart.render(tradingScreen.chartModel);
+};
+
