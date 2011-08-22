@@ -1,3 +1,10 @@
+var chart;
+
+window.GRID_LINES_COLOR = '#D5D0CD';
+window.PRICE_LINES_COLOR = '#0066FF';
+var AXIS_Y_WIDTH = 30;
+var AXIS_X_HEIGHT = 30;
+
 $(document).ready(function() {
 	$('#menu-login').fancybox({
 		modal: true,

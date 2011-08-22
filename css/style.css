@@ -521,3 +521,9 @@ div.inner:after, .clearfix:after {clear:both;content:' ';display:block;font-size
 #order_grid tr.selected td {
 	background:#F6F6F6;
 }
+
+#chart {
+	width:270px;
+	height:240px;
+	border:2px solid #CCCCCC;
+}
