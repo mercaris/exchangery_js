@@ -1,7 +1,9 @@
 var chart;
 
 window.GRID_LINES_COLOR = '#D5D0CD';
+window.COLUMN_DIVIDER = '#666666';
 window.PRICE_LINES_COLOR = '#0066FF';
+window.FOREGROUND_COLOR = '#000000';
 var AXIS_Y_WIDTH = 30;
 var AXIS_X_HEIGHT = 30;
 

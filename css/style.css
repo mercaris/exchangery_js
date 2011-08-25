@@ -523,7 +523,8 @@ div.inner:after, .clearfix:after {clear:both;content:' ';display:block;font-size
 }
 
 #chart {
-	width:270px;
+	width:350px;
 	height:240px;
 	border:2px solid #CCCCCC;
+	margin:15px auto;
 }

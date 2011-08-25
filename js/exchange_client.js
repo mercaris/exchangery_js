@@ -105,16 +105,16 @@ ExchangeClient.prototype.marketUpdate = function(callback) {
 		dataType: 'json',
 		success: function(data) {
 		    try {
-			$.each(data.market_update.orders, function (i, order) {
-			    exchange.products[order.product_id].addOrReplaceOrder(order);
-			    exchange.notifyProductUpdateListeners(order.product_id);
-			});
-			$.each(data.market_update.trades, function (i, trade) {
-			    exchange.products[trade.product_id].addOrReplaceTrade(trade);
-			});
+				$.each(data.market_update.orders, function (i, order) {
+					exchange.products[order.product_id].addOrReplaceOrder(order);
+					exchange.notifyProductUpdateListeners(order.product_id);
+				});
+				$.each(data.market_update.trades, function (i, trade) {
+					exchange.products[trade.product_id].addOrReplaceTrade(trade);
+				});
 		    }
 		    catch(err) {
-			alert(err);
+				alert(err);
 		    }
 		    callback();
 		    exchange.fetching = false;
