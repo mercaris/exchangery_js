@@ -12,7 +12,7 @@ function TradingScreen(gridId, orderFormId, detailPaneId) {
     this.symbolDropdown = $('#' + orderFormId + ' [name=symbol]');
     this.exchange = null;
 	this.chartModel = new ChartModel(0);
-	this.mode = 'test';
+	this.mode = 'test1';
 };
 
 /*
@@ -55,7 +55,7 @@ TradingScreen.prototype.drawOrderGrid = function() {
 	tradingScreen.exchange.registerRecentTradeUpdateListener(tradingScreen, tradingScreen.fillSummaryRow);
     tradingScreen.wireOrderForm();
     tradingScreen.beginPolling();
-	if (tradingScreen.mode = 'test')
+	if (tradingScreen.mode == 'test')
 	{
 		tradingScreen.generateRandomOrders();
 	}
@@ -172,29 +172,37 @@ TradingScreen.prototype.showDetail = function (productId) {
 
     var $table = tradingScreen.detailGrid.find('tbody');
 
-    $.each(product.orders.offers, function (rowid, offer) {
-	tradingScreen.drawDetailRow(rowid+"_"+productId);
-	tradingScreen.fillDetailRow(rowid+"_"+productId,
-			      {product: tradingScreen.exchange.getSymbol(productId),
-			       bid_quantity: '',
-			       bid: '',
-			       offer: offer.price,
-			       offer_quantity: displayQuantity(offer)},
-			     productId);
-    });
+    //for (var rowid = product.orders.offers.length - 10; rowid < product.orders.offers.length; rowid++)
+	var count = (product.orders.offers.length > 10) ? (10) : (product.orders.offers.length);
+	for (var rowid = 0; rowid < count; rowid++)
+    {
+		var offer = product.orders.offers[rowid];
+		tradingScreen.drawDetailRow(rowid+"_"+productId);
+		tradingScreen.fillDetailRow(rowid+"_"+productId,
+					  {product: tradingScreen.exchange.getSymbol(productId),
+					   bid_quantity: '',
+					   bid: '',
+					   offer: offer.price,
+					   offer_quantity: displayQuantity(offer)},
+					 productId);
+    }
 
-    $.each(product.orders.bids, function (rowid, bid) {
-	rowid += product.orders.offers.length;
+    //for (var rowid1 = product.orders.bids.length - 1; rowid1 >= product.orders.bids.length - 10; rowid1--)
+	count = (product.orders.bids.length > 10) ? (10) : (product.orders.bids.length);
+	for (var rowid1 = 0; rowid1 < count; rowid1++)
+	{
+		rowid++;
+		var bid = product.orders.bids[rowid1];
 
-	tradingScreen.drawDetailRow(rowid+"_"+productId);
-	tradingScreen.fillDetailRow(rowid+"_"+productId,
-			      {product: tradingScreen.exchange.getSymbol(productId),
-			       bid_quantity: displayQuantity(bid),
-			       bid: bid.price,
-			       offer: '',
-			       offer_quantity: ''},
-			     productId);
-    });
+		tradingScreen.drawDetailRow(rowid+"_"+productId);
+		tradingScreen.fillDetailRow(rowid+"_"+productId,
+					  {product: tradingScreen.exchange.getSymbol(productId),
+					   bid_quantity: displayQuantity(bid),
+					   bid: bid.price,
+					   offer: '',
+					   offer_quantity: ''},
+					 productId);
+    }
 	
 	$(tradingScreen.orderGrid).find('tr').each(function(){
 		$(this).removeClass('selected');
@@ -322,12 +330,12 @@ TradingScreen.prototype.generateRandomOrders = function() {
 			var randomKey = Math.floor(Math.random() * prodCount);
 			randProd = arrProd[randomKey];
 			
-			var side = (Math.floor(Math.random() * 100) % 2 == 0) ? ('buy') : ('sell');
+			var side = (Math.floor(Math.random() * 2) == 0) ? ('buy') : ('sell');
 			var sideKey = (side == 'buy') ? ('bids') :('offers');
 			var percentPrice = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.9) : (1.1);
 			var percentQty = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.5) : (1.5);
 
-			var price = 100, qty = 100;
+			var price = 10, qty = 10;
 
 			if (randProd['orders'][sideKey].length > 0)
 			{
@@ -338,13 +346,18 @@ TradingScreen.prototype.generateRandomOrders = function() {
 
 			//alert(side + '---'  + Math.floor(qty * percentQty) + '---'  + Math.floor(price * percentPrice));
 
-			tradingScreen.exchange.placeOrder(randProd.id, side, Math.floor(qty * percentQty), Math.floor(price * percentPrice) + 3, function(){});
+			tradingScreen.exchange.placeOrder(randProd.id, side, Math.round((qty + 5) * percentQty), roundNumber((price + 10) * percentPrice, 2), function(){});
 		}
     }
 
     setInterval(gen_order, 1000);
     
 };
+
+function roundNumber(num, dec) {
+	var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+	return result;
+}
 
 /*
  * Get chart container
@@ -369,7 +382,7 @@ TradingScreen.prototype.repaintChart = function() {
 		delete chart;
 	}
 	axisY--;
-	chart = new ChartWidget(divTag, 269, 240, axisY);
+	chart = new ChartWidget(divTag, 350, 240, axisY);
 
 	//chart.data("Live bid price", sellHistory, SELL_COLOR);
 	//chart.data("Live ask price", buyHistory, BUY_COLOR);
