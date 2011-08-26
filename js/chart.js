@@ -55,7 +55,7 @@ ChartWidget.prototype = {
 				renderer.fill = FOREGROUND_COLOR;
 				renderer.stroke = 'transparent';
 				renderer.gravity = 'west';
-				renderer.annotate(280, y - 15, roundNumber(y / AXIS_X_HEIGHT * model._baseY / 4, 2));
+				renderer.annotate(280, y - 15, roundNumber(model._baseY * 2 - y / AXIS_X_HEIGHT * model._baseY / 4, 2));
 			}
 		}
 	},
