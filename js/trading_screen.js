@@ -12,7 +12,7 @@ function TradingScreen(gridId, orderFormId, detailPaneId) {
     this.symbolDropdown = $('#' + orderFormId + ' [name=symbol]');
     this.exchange = null;
 	this.chartModel = new ChartModel(0);
-	this.mode = 'test1';
+	this.mode = 'test';
 };
 
 /*
@@ -314,43 +314,74 @@ TradingScreen.prototype.placeOrder = function() {
 TradingScreen.prototype.generateRandomOrders = function() {
     var tradingScreen = this;	
 
+	var oldOrder = {};
 	var gen_order = function() {	
 		if (tradingScreen.exchange.connected)
 		{
 			var products = tradingScreen.exchange.products;
-			var randProd = null;
-			var prodCount = 0;
-			var arrProd = new Array();
-			for (productId in products)
+			var isCross = 0;
+			if (oldOrder['productId'])
 			{
-				arrProd[prodCount] = products[productId];
-				prodCount++;
+				var sideKey1 = (oldOrder['side'] == 'buy') ? ('bids') :('offers');
+				if (products[oldOrder['productId']]['orders'][sideKey1].length > 8)
+				{
+					isCross = 1;
+				}
 			}
-			var randProd = null;
-			var randomKey = Math.floor(Math.random() * prodCount);
-			randProd = arrProd[randomKey];
-			
-			var side = (Math.floor(Math.random() * 2) == 0) ? ('buy') : ('sell');
-			var sideKey = (side == 'buy') ? ('bids') :('offers');
-			var percentPrice = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.9) : (1.1);
-			var percentQty = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.5) : (1.5);
-
-			var price = 10, qty = 10;
-
-			if (randProd['orders'][sideKey].length > 0)
+			if (isCross == 1)
 			{
-				var lastOrder = randProd['orders'][sideKey][randProd['orders'][sideKey].length - 1];
-				price = (lastOrder.price != 0) ? (lastOrder.price) : (price);
-				qty = (lastOrder.quantity != 0) ? (lastOrder.quantity) : (qty);
+				var productId = oldOrder['productId'];
+				var side = (oldOrder['side'] == 'buy') ? ('sell') : ('buy');
+				var qty = oldOrder['qty'];
+				var price = oldOrder['price'];
+				oldOrder = {};
+			}
+			else
+			{
+				var randProd = null;
+				var prodCount = 0;
+				var arrProd = new Array();
+				for (productId in products)
+				{
+					arrProd[prodCount] = products[productId];
+					prodCount++;
+				}
+				var randProd = null;
+				var randomKey = Math.floor(Math.random() * prodCount);
+				randProd = arrProd[randomKey];
+				
+				var side = (Math.floor(Math.random() * 2) == 0) ? ('buy') : ('sell');
+				var sideKey = (side == 'buy') ? ('bids') :('offers');
+				var percentPrice = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.9) : (1.1);
+				var percentQty = (Math.floor(Math.random() * 100) % 2 == 0) ? (0.5) : (1.5);
+
+				var price = 100, qty = 100;
+
+				if (randProd['orders'][sideKey].length > 0)
+				{
+					var lastOrder = randProd['orders'][sideKey][randProd['orders'][sideKey].length - 1];
+					price = (lastOrder.price != 0) ? (lastOrder.price) : (price);
+					qty = (lastOrder.quantity != 0) ? (lastOrder.quantity) : (qty);
+				}
+
+				var productId = randProd.id;
+				qty = Math.round((qty + 5) * percentQty);
+				price = roundNumber((price + 10) * percentPrice, 2);
+
+				//alert(side + '---'  + Math.floor(qty * percentQty) + '---'  + Math.floor(price * percentPrice));
+				oldOrder['productId'] = productId;
+				oldOrder['side'] = side;
+				oldOrder['qty'] = qty;
+				oldOrder['price'] = price;
 			}
 
-			//alert(side + '---'  + Math.floor(qty * percentQty) + '---'  + Math.floor(price * percentPrice));
-
-			tradingScreen.exchange.placeOrder(randProd.id, side, Math.round((qty + 5) * percentQty), roundNumber((price + 10) * percentPrice, 2), function(){});
+			tradingScreen.exchange.placeOrder(productId, side, qty, price, function(){
+				setTimeout(gen_order, 1000);
+			});
 		}
     }
 
-    setInterval(gen_order, 1000);
+	setTimeout(gen_order, 1000);
     
 };
 
